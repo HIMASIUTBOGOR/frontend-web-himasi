@@ -97,7 +97,7 @@ onBeforeRouteUpdate(() => {
 });
 
 const isFullScreenSidebar = computed(
-  () => isTablet.value && !isSidebarMinimized.value
+  () => isTablet.value && !isSidebarMinimized.value,
 );
 
 const onCloseSidebarButtonClick = () => {

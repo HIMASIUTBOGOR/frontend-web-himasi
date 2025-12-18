@@ -78,7 +78,7 @@ onMounted(() => {
     link.rel = "stylesheet";
     link.href = new URL(
       "../../template/himasi/css/style.css",
-      import.meta.url
+      import.meta.url,
     ).href;
     document.head.appendChild(link);
   }

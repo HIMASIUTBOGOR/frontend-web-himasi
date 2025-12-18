@@ -1,4 +1,4 @@
-import { getProjectsStub } from './projects'
-import { getUsersStub } from './users'
+import { getProjectsStub } from "./projects";
+import { getUsersStub } from "./users";
 
-export { getProjectsStub, getUsersStub }
+export { getProjectsStub, getUsersStub };

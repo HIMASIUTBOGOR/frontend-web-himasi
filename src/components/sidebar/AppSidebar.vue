@@ -114,7 +114,7 @@ export default defineComponent({
         );
       }
       return section.children.some(
-        (c) => route.path === c.url || route.path.startsWith(c.url + "/")
+        (c) => route.path === c.url || route.path.startsWith(c.url + "/"),
       );
     };
 

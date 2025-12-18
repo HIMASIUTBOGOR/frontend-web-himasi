@@ -24,7 +24,7 @@ if (import.meta.env.VITE_APP_GTM_ENABLED) {
       id: import.meta.env.VITE_APP_GTM_KEY,
       debug: false,
       vueRouter: router,
-    })
+    }),
   );
 }
 

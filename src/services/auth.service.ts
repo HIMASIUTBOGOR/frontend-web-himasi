@@ -28,7 +28,7 @@ export async function signIn(payload: SignInPayload): Promise<SignInResponse> {
   try {
     const { data } = await http.post<SignInResponse>(
       "/api/auth/sign-in",
-      payload
+      payload,
     );
     setAuth(data.access_token, data.token_type, data.user);
     return data;

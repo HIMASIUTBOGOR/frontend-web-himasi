@@ -111,7 +111,7 @@ withDefaults(
         ],
       },
     ],
-  }
+  },
 );
 
 const isShown = ref(false);

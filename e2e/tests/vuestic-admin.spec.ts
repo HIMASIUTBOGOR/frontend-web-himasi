@@ -1,93 +1,93 @@
-import { test } from '@playwright/test'
+import { test } from "@playwright/test";
 
-import { testApiMocksPage } from '../utils'
+import { testApiMocksPage } from "../utils";
 
-import { getProjectsStub, getUsersStub } from '../stubs'
+import { getProjectsStub, getUsersStub } from "../stubs";
 
 const pageMocks: {
-  name: string
-  url: string
-  apiMocks?: Record<string, object>
+  name: string;
+  url: string;
+  apiMocks?: Record<string, object>;
 }[] = [
   {
-    name: 'Dashboard',
-    url: '/dashboard',
+    name: "Dashboard",
+    url: "/dashboard",
   },
   {
-    name: 'Settings',
-    url: '/settings',
+    name: "Settings",
+    url: "/settings",
   },
   {
-    name: 'Preferences',
-    url: '/preferences',
+    name: "Preferences",
+    url: "/preferences",
   },
   {
-    name: 'Users',
-    url: '/users',
+    name: "Users",
+    url: "/users",
     apiMocks: {
-      '/projects': getProjectsStub,
-      '/users': getUsersStub,
+      "/projects": getProjectsStub,
+      "/users": getUsersStub,
     },
   },
   {
-    name: 'Projects',
-    url: '/projects',
+    name: "Projects",
+    url: "/projects",
     apiMocks: {
-      '/projects': getProjectsStub,
-      '/users': getUsersStub,
+      "/projects": getProjectsStub,
+      "/users": getUsersStub,
     },
   },
   {
-    name: 'Payments',
-    url: '/payments',
+    name: "Payments",
+    url: "/payments",
   },
   {
-    name: 'Payment Methods',
-    url: '/payments/payment-methods',
+    name: "Payment Methods",
+    url: "/payments/payment-methods",
   },
   {
-    name: 'Billing',
-    url: '/payments/billing',
+    name: "Billing",
+    url: "/payments/billing",
   },
   {
-    name: 'Pricing Plans',
-    url: '/payments/pricing-plans',
+    name: "Pricing Plans",
+    url: "/payments/pricing-plans",
   },
   {
-    name: 'FAQ',
-    url: '/faq',
+    name: "FAQ",
+    url: "/faq",
   },
   {
-    name: 'Auth',
-    url: '/auth',
+    name: "Auth",
+    url: "/auth",
   },
   {
-    name: 'Login',
-    url: '/auth/login',
+    name: "Login",
+    url: "/auth/login",
   },
   {
-    name: 'Sign Up',
-    url: '/auth/signup',
+    name: "Sign Up",
+    url: "/auth/signup",
   },
   {
-    name: 'Recover Password',
-    url: '/auth/recover-password',
+    name: "Recover Password",
+    url: "/auth/recover-password",
   },
   {
-    name: 'Recover Password Email',
-    url: '/auth/recover-password-email',
+    name: "Recover Password Email",
+    url: "/auth/recover-password-email",
   },
   {
-    name: '404',
-    url: '/404',
+    name: "404",
+    url: "/404",
   },
-]
+];
 
 for (const item of pageMocks) {
   test(item.name, async ({ page }) => {
     await testApiMocksPage({
       page,
       ...item,
-    })
-  })
+    });
+  });
 }

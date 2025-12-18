@@ -188,6 +188,6 @@ const currentVisual = computed(() => ({
   label: currentProgram.value.label,
 }));
 const currentDetail = computed(
-  () => currentProgram.value.details[selectedItem.value]
+  () => currentProgram.value.details[selectedItem.value],
 );
 </script>

@@ -61,12 +61,18 @@ export const useAuthStore = defineStore("auth", {
       this.user = data.user;
       this.roles = data.roles || [];
       this.permissions = data.permissions || [];
-      // ensure children arrays exist
+      // ensure children arrays exist and prefix URLs with /dashboard if needed
       const normalize = (items: MenuItem[]): MenuItem[] =>
-        (items || []).map((m) => ({
-          ...m,
-          children: normalize(m.children || []),
-        }));
+        (items || []).map((m) => {
+          const url = m.url.startsWith("/dashboard")
+            ? m.url
+            : `/dashboard${m.url}`;
+          return {
+            ...m,
+            url,
+            children: normalize(m.children || []),
+          };
+        });
       this.menus = normalize(data.menus || []);
       this.loaded = true;
     },
