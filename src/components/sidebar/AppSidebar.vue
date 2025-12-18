@@ -1,45 +1,70 @@
 <template>
-  <VaSidebar v-model="writableVisible" :width="sidebarWidth" :color="color" minimized-width="0">
+  <VaSidebar
+    v-model="writableVisible"
+    :width="sidebarWidth"
+    :color="color"
+    minimized-width="0"
+  >
     <VaAccordion v-model="value" multiple>
-      <VaCollapse v-for="(route, index) in navigationRoutes.routes" :key="index">
+      <VaCollapse v-for="(route, index) in menuRoutes" :key="index">
         <template #header="{ value: isCollapsed }">
           <VaSidebarItem
-            :to="route.children ? undefined : { name: route.name }"
+            :to="route.children?.length ? undefined : { path: route.url }"
             :active="routeHasActiveChild(route)"
             :active-color="activeColor"
             :text-color="textColor(route)"
-            :aria-label="`${route.children ? 'Open category ' : 'Visit'} ${t(route.displayName)}`"
+            :aria-label="`${route.children?.length ? 'Open category ' : 'Visit'} ${route.name}`"
             role="button"
             hover-opacity="0.10"
           >
             <VaSidebarItemContent class="py-3 pr-2 pl-4">
-              <VaIcon
-                v-if="route.meta.icon"
-                aria-hidden="true"
-                :name="route.meta.icon"
-                size="20px"
-                :color="iconColor(route)"
-              />
-              <VaSidebarItemTitle class="flex justify-between items-center leading-5 font-semibold">
-                {{ t(route.displayName) }}
-                <VaIcon v-if="route.children" :name="arrowDirection(isCollapsed)" size="20px" />
+              <template v-if="route.icon">
+                <!-- Use Iconify for ids with ':'; fallback to VaIcon -->
+                <Icon
+                  v-if="isIconify(route.icon)"
+                  :icon="route.icon"
+                  :width="20"
+                  :height="20"
+                  :style="{ color: iconCssColor(route) }"
+                  class="mr-2"
+                />
+                <VaIcon
+                  v-else
+                  aria-hidden="true"
+                  :name="route.icon"
+                  size="20px"
+                  :color="iconColor(route)"
+                />
+              </template>
+              <VaSidebarItemTitle
+                class="flex justify-between items-center leading-5 font-semibold"
+              >
+                {{ route.name }}
+                <VaIcon
+                  v-if="route.children?.length"
+                  :name="arrowDirection(isCollapsed)"
+                  size="20px"
+                />
               </VaSidebarItemTitle>
             </VaSidebarItemContent>
           </VaSidebarItem>
         </template>
         <template #body>
-          <div v-for="(childRoute, index2) in route.children" :key="index2">
+          <div
+            v-for="(childRoute, index2) in route.children || []"
+            :key="index2"
+          >
             <VaSidebarItem
-              :to="{ name: childRoute.name }"
+              :to="{ path: childRoute.url }"
               :active="isActiveChildRoute(childRoute)"
               :active-color="activeColor"
               :text-color="textColor(childRoute)"
-              :aria-label="`Visit ${t(route.displayName)}`"
+              :aria-label="`Visit ${route.name}`"
               hover-opacity="0.10"
             >
               <VaSidebarItemContent class="py-3 pr-2 pl-11">
                 <VaSidebarItemTitle class="leading-5 font-semibold">
-                  {{ t(childRoute.displayName) }}
+                  {{ childRoute.name }}
                 </VaSidebarItemTitle>
               </VaSidebarItemContent>
             </VaSidebarItem>
@@ -50,56 +75,68 @@
   </VaSidebar>
 </template>
 <script lang="ts">
-import { defineComponent, watch, ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { defineComponent, watch, ref, computed } from "vue";
+import { useRoute } from "vue-router";
 
-import { useI18n } from 'vue-i18n'
-import { useColors } from 'vuestic-ui'
-
-import navigationRoutes, { type INavigationRoute } from './NavigationRoutes'
+import { useI18n } from "vue-i18n";
+import { useColors } from "vuestic-ui";
+import { useAuthStore, type MenuItem } from "../../stores/auth-store";
+import { Icon } from "@iconify/vue";
 
 export default defineComponent({
-  name: 'Sidebar',
+  name: "Sidebar",
+  components: { Icon },
   props: {
     visible: { type: Boolean, default: true },
     mobile: { type: Boolean, default: false },
   },
-  emits: ['update:visible'],
+  emits: ["update:visible"],
 
   setup: (props, { emit }) => {
-    const { getColor, colorToRgba } = useColors()
-    const route = useRoute()
-    const { t } = useI18n()
+    const { getColor, colorToRgba } = useColors();
+    const route = useRoute();
+    const { t } = useI18n();
+    const auth = useAuthStore();
 
-    const value = ref<boolean[]>([])
+    const value = ref<boolean[]>([]);
 
     const writableVisible = computed({
       get: () => props.visible,
-      set: (v: boolean) => emit('update:visible', v),
-    })
+      set: (v: boolean) => emit("update:visible", v),
+    });
 
-    const isActiveChildRoute = (child: INavigationRoute) => route.name === child.name
+    const isActiveChildRoute = (child: MenuItem) => route.path === child.url;
 
-    const routeHasActiveChild = (section: INavigationRoute) => {
-      if (!section.children) {
-        return route.path.endsWith(`${section.name}`)
+    const routeHasActiveChild = (section: MenuItem) => {
+      if (!section.children || !section.children.length) {
+        return (
+          route.path === section.url || route.path.startsWith(section.url + "/")
+        );
       }
+      return section.children.some(
+        (c) => route.path === c.url || route.path.startsWith(c.url + "/")
+      );
+    };
 
-      return section.children.some(({ name }) => route.path.endsWith(`${name}`))
-    }
+    const menuRoutes = computed<MenuItem[]>(() => auth.menus);
 
     const setActiveExpand = () =>
-      (value.value = navigationRoutes.routes.map((route: INavigationRoute) => routeHasActiveChild(route)))
+      (value.value = menuRoutes.value.map((r) => routeHasActiveChild(r)));
 
-    const sidebarWidth = computed(() => (props.mobile ? '100vw' : '280px'))
-    const color = computed(() => getColor('background-secondary'))
-    const activeColor = computed(() => colorToRgba(getColor('focus'), 0.1))
+    const sidebarWidth = computed(() => (props.mobile ? "100vw" : "280px"));
+    const color = computed(() => getColor("background-secondary"));
+    const activeColor = computed(() => colorToRgba(getColor("focus"), 0.1));
 
-    const iconColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'secondary')
-    const textColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'textPrimary')
-    const arrowDirection = (state: boolean) => (state ? 'va-arrow-up' : 'va-arrow-down')
+    const iconColor = (route: MenuItem) =>
+      routeHasActiveChild(route) ? "primary" : "secondary";
+    const iconCssColor = (route: MenuItem) => getColor(iconColor(route));
+    const isIconify = (name?: string | null) => !!name && name.includes(":");
+    const textColor = (route: MenuItem) =>
+      routeHasActiveChild(route) ? "primary" : "textPrimary";
+    const arrowDirection = (state: boolean) =>
+      state ? "va-arrow-up" : "va-arrow-down";
 
-    watch(() => route.fullPath, setActiveExpand, { immediate: true })
+    watch(() => route.fullPath, setActiveExpand, { immediate: true });
 
     return {
       writableVisible,
@@ -107,14 +144,16 @@ export default defineComponent({
       value,
       color,
       activeColor,
-      navigationRoutes,
+      menuRoutes,
       routeHasActiveChild,
       isActiveChildRoute,
       t,
       iconColor,
+      iconCssColor,
+      isIconify,
       textColor,
       arrowDirection,
-    }
+    };
   },
-})
+});
 </script>

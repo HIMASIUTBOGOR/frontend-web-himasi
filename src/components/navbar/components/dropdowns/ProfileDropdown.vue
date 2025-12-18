@@ -30,6 +30,7 @@
             :key="item.name"
             class="menu-item px-4 text-base cursor-pointer h-8"
             v-bind="resolveLinkAttribute(item)"
+            @click="handleClick(item)"
           >
             <VaIcon :name="item.icon" class="pr-1" color="secondary" />
             {{ t(`user.${item.name}`) }}
@@ -45,17 +46,24 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useColors } from "vuestic-ui";
+import { useRouter } from "vue-router";
+import { useToast } from "vuestic-ui";
+import { clearAuth } from "../../../../services/config";
+import { signOut } from "../../../../services/auth.service";
 
 const { colors, setHSLAColor } = useColors();
 const hoverColor = computed(() => setHSLAColor(colors.focus, { a: 0.1 }));
 
 const { t } = useI18n();
+const { push } = useRouter();
+const { init } = useToast();
 
 type ProfileListItem = {
   name: string;
   to?: string;
   href?: string;
   icon: string;
+  action?: "logout";
 };
 
 type ProfileOptions = {
@@ -91,6 +99,17 @@ withDefaults(
           },
         ],
       },
+      {
+        name: "actions",
+        separator: false,
+        list: [
+          {
+            name: "logout",
+            icon: "mso-logout",
+            action: "logout",
+          },
+        ],
+      },
     ],
   }
 );
@@ -103,6 +122,17 @@ const resolveLinkAttribute = (item: ProfileListItem) => {
     : item.href
       ? { href: item.href, target: "_blank" }
       : {};
+};
+
+const handleClick = async (item: ProfileListItem) => {
+  if (item.action === "logout") {
+    try {
+      await signOut();
+    } catch {}
+    clearAuth();
+    init({ message: t("user.loggedOut") || "Logged out", color: "info" });
+    push({ name: "login" });
+  }
 };
 </script>
 

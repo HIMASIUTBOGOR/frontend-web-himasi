@@ -37,19 +37,23 @@
     </VaValue>
 
     <div class="flex justify-center mt-4">
-      <VaButton class="w-full" @click="submit"> Login</VaButton>
+      <VaButton class="w-full" :loading="loading" @click="submit">
+        Login</VaButton
+      >
     </div>
   </VaForm>
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
-import { useRouter } from "vue-router";
+import { reactive, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useForm, useToast } from "vuestic-ui";
 import { validators } from "../../services/utils";
+import { signIn } from "../../services/auth.service";
 
 const { validate } = useForm("form");
 const { push } = useRouter();
+const route = useRoute();
 const { init } = useToast();
 
 const formData = reactive({
@@ -58,10 +62,27 @@ const formData = reactive({
   keepLoggedIn: false,
 });
 
-const submit = () => {
-  if (validate()) {
-    init({ message: "You've successfully logged in", color: "success" });
-    push({ name: "dashboard" });
+const loading = ref(false);
+
+const submit = async () => {
+  if (!validate()) return;
+  loading.value = true;
+  try {
+    const res = await signIn({
+      nim: formData.nim,
+      password: formData.password,
+    });
+    init({ message: res.message || "Berhasil masuk", color: "success" });
+    const redirect = (route.query.redirect as string) || undefined;
+    if (redirect) {
+      push(redirect);
+    } else {
+      push({ name: "dashboard" });
+    }
+  } catch (e: any) {
+    init({ message: e?.message || "Gagal login", color: "danger" });
+  } finally {
+    loading.value = false;
   }
 };
 </script>

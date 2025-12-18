@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { getToken, clearAuth } from "../services/config";
+import { useAuthStore } from "../stores/auth-store";
 
 import AuthLayout from "../layouts/AuthLayout.vue";
 import AppLayout from "../layouts/AppLayout.vue";
@@ -130,6 +132,38 @@ const router = createRouter({
     }
   },
   routes,
+});
+
+router.beforeEach(async (to) => {
+  const tokenPresent = Boolean(getToken());
+  const auth = useAuthStore();
+
+  // Guard all dashboard routes
+  if (to.path.startsWith("/dashboard")) {
+    if (!tokenPresent) {
+      return { name: "login", query: { redirect: to.fullPath } };
+    }
+
+    // Validate token by loading /api/auth/me
+    try {
+      await auth.loadMe(true);
+    } catch (e) {
+      clearAuth();
+      return { name: "login", query: { redirect: to.fullPath } };
+    }
+  }
+
+  // If already authenticated (valid) prevent going to login
+  if (to.name === "login" && tokenPresent) {
+    try {
+      await auth.loadMe(true);
+      return { name: "dashboard" };
+    } catch {
+      // invalid token, allow to proceed to login
+      clearAuth();
+      return;
+    }
+  }
 });
 
 export default router;
