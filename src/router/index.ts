@@ -15,7 +15,18 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: "welcome",
         path: "",
-        component: () => import("../pages/guest/Welcome.vue"),
+        component: () => import("../pages/guest/welcome/Welcome.vue"),
+      },
+      {
+        name: "Pengurus",
+        path: "/pengurus",
+        component: () =>
+          import("../pages/guest/administration/Administration.vue"),
+      },
+      {
+        name: "Pendaftaran",
+        path: "/pendaftaran",
+        component: () => import("../pages/guest/registration/Registration.vue"),
       },
     ],
   },
@@ -32,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         name: "dashboard",
-        path: "dashboard",
+        path: "",
         component: () => import("../pages/admin/dashboard/Dashboard.vue"),
       },
       {
