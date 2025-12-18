@@ -8,7 +8,6 @@
     <ProkerSection />
     <NewsSection />
     <FaqSection />
-    <FooterSection />
   </div>
 </template>
 
@@ -21,7 +20,6 @@ import BenefitsSection from "./sections/BenefitsSection.vue";
 import ProkerSection from "./sections/ProkerSection.vue";
 import NewsSection from "./sections/NewsSection.vue";
 import FaqSection from "./sections/FaqSection.vue";
-import FooterSection from "./sections/FooterSection.vue";
 </script>
 
 <!-- Styles are provided via global import of template style.css in main.ts -->
