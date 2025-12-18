@@ -1,16 +1,17 @@
 <template>
   <VaForm ref="form" @submit.prevent="submit">
+    <div class="flex justify-center items-center">
+      <img src="/images/logo-single.png" alt="logo himasi" width="40%" />
+    </div>
     <h1 class="font-semibold text-4xl mb-4">Log in</h1>
-    <p class="text-base mb-4 leading-5">
-      New to Vuestic?
-      <RouterLink :to="{ name: 'signup' }" class="font-semibold text-primary">Sign up</RouterLink>
-    </p>
+    <p class="text-base mb-4 leading-5">Log in to your account</p>
+
     <VaInput
-      v-model="formData.email"
-      :rules="[validators.required, validators.email]"
+      v-model="formData.nim"
+      :rules="[validators.required]"
       class="mb-4"
-      label="Email"
-      type="email"
+      label="nim"
+      type="text"
     />
     <VaValue v-slot="isPasswordVisible" :default-value="false">
       <VaInput
@@ -19,24 +20,21 @@
         :type="isPasswordVisible.value ? 'text' : 'password'"
         class="mb-4"
         label="Password"
-        @clickAppendInner.stop="isPasswordVisible.value = !isPasswordVisible.value"
+        @clickAppendInner.stop="
+          isPasswordVisible.value = !isPasswordVisible.value
+        "
       >
         <template #appendInner>
           <VaIcon
-            :name="isPasswordVisible.value ? 'mso-visibility_off' : 'mso-visibility'"
+            :name="
+              isPasswordVisible.value ? 'mso-visibility_off' : 'mso-visibility'
+            "
             class="cursor-pointer"
             color="secondary"
           />
         </template>
       </VaInput>
     </VaValue>
-
-    <div class="auth-layout__options flex flex-col sm:flex-row items-start sm:items-center justify-between">
-      <VaCheckbox v-model="formData.keepLoggedIn" class="mb-2 sm:mb-0" label="Keep me signed in on this device" />
-      <RouterLink :to="{ name: 'recover-password' }" class="mt-2 sm:mt-0 sm:ml-1 font-semibold text-primary">
-        Forgot password?
-      </RouterLink>
-    </div>
 
     <div class="flex justify-center mt-4">
       <VaButton class="w-full" @click="submit"> Login</VaButton>
@@ -45,25 +43,25 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useForm, useToast } from 'vuestic-ui'
-import { validators } from '../../services/utils'
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useForm, useToast } from "vuestic-ui";
+import { validators } from "../../services/utils";
 
-const { validate } = useForm('form')
-const { push } = useRouter()
-const { init } = useToast()
+const { validate } = useForm("form");
+const { push } = useRouter();
+const { init } = useToast();
 
 const formData = reactive({
-  email: '',
-  password: '',
+  nim: "",
+  password: "",
   keepLoggedIn: false,
-})
+});
 
 const submit = () => {
   if (validate()) {
-    init({ message: "You've successfully logged in", color: 'success' })
-    push({ name: 'dashboard' })
+    init({ message: "You've successfully logged in", color: "success" });
+    push({ name: "dashboard" });
   }
-}
+};
 </script>

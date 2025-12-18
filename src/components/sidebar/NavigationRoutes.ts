@@ -1,107 +1,85 @@
 export interface INavigationRoute {
-  name: string
-  displayName: string
-  meta: { icon: string }
-  children?: INavigationRoute[]
+  name: string;
+  displayName: string;
+  meta: { icon: string };
+  children?: INavigationRoute[];
 }
 
 export default {
   root: {
-    name: '/',
-    displayName: 'navigationRoutes.home',
+    name: "/",
+    displayName: "navigationRoutes.home",
   },
   routes: [
     {
-      name: 'dashboard',
-      displayName: 'menu.dashboard',
+      name: "dashboard",
+      displayName: "menu.dashboard",
       meta: {
-        icon: 'vuestic-iconset-dashboard',
+        icon: "vuestic-iconset-dashboard",
       },
     },
     {
-      name: 'users',
-      displayName: 'menu.users',
+      name: "users",
+      displayName: "menu.users",
       meta: {
-        icon: 'group',
+        icon: "group",
       },
     },
     {
-      name: 'projects',
-      displayName: 'menu.projects',
+      name: "projects",
+      displayName: "menu.projects",
       meta: {
-        icon: 'folder_shared',
+        icon: "folder_shared",
       },
     },
     {
-      name: 'payments',
-      displayName: 'menu.payments',
+      name: "payments",
+      displayName: "menu.payments",
       meta: {
-        icon: 'credit_card',
+        icon: "credit_card",
       },
       children: [
         {
-          name: 'payment-methods',
-          displayName: 'menu.payment-methods',
+          name: "payment-methods",
+          displayName: "menu.payment-methods",
         },
         {
-          name: 'pricing-plans',
-          displayName: 'menu.pricing-plans',
+          name: "pricing-plans",
+          displayName: "menu.pricing-plans",
         },
         {
-          name: 'billing',
-          displayName: 'menu.billing',
+          name: "billing",
+          displayName: "menu.billing",
         },
       ],
     },
     {
-      name: 'auth',
-      displayName: 'menu.auth',
+      name: "faq",
+      displayName: "menu.faq",
       meta: {
-        icon: 'login',
-      },
-      children: [
-        {
-          name: 'login',
-          displayName: 'menu.login',
-        },
-        {
-          name: 'signup',
-          displayName: 'menu.signup',
-        },
-        {
-          name: 'recover-password',
-          displayName: 'menu.recover-password',
-        },
-      ],
-    },
-
-    {
-      name: 'faq',
-      displayName: 'menu.faq',
-      meta: {
-        icon: 'quiz',
+        icon: "quiz",
       },
     },
     {
-      name: '404',
-      displayName: 'menu.404',
+      name: "404",
+      displayName: "menu.404",
       meta: {
-        icon: 'vuestic-iconset-files',
+        icon: "vuestic-iconset-files",
       },
     },
     {
-      name: 'preferences',
-      displayName: 'menu.preferences',
+      name: "preferences",
+      displayName: "menu.preferences",
       meta: {
-        icon: 'manage_accounts',
+        icon: "manage_accounts",
       },
     },
     {
-      name: 'settings',
-      displayName: 'menu.settings',
+      name: "settings",
+      displayName: "menu.settings",
       meta: {
-        icon: 'settings',
+        icon: "settings",
       },
     },
   ] as INavigationRoute[],
-}
+};

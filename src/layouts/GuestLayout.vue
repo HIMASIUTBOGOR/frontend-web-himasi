@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import FooterSection from "../pages/guest/welcome/sections/FooterSection.vue";
-</script>
-
 <template>
   <header class="header">
     <div class="container header-container">
@@ -67,3 +63,31 @@ import FooterSection from "../pages/guest/welcome/sections/FooterSection.vue";
 
   <FooterSection />
 </template>
+
+<script setup lang="ts">
+import FooterSection from "../pages/guest/welcome/sections/FooterSection.vue";
+import { onMounted, onUnmounted } from "vue";
+
+const STYLE_ID = "himasi-guest-style";
+
+onMounted(() => {
+  let link = document.getElementById(STYLE_ID) as HTMLLinkElement | null;
+  if (!link) {
+    link = document.createElement("link");
+    link.id = STYLE_ID;
+    link.rel = "stylesheet";
+    link.href = new URL(
+      "../../template/himasi/css/style.css",
+      import.meta.url
+    ).href;
+    document.head.appendChild(link);
+  }
+});
+
+onUnmounted(() => {
+  const link = document.getElementById(STYLE_ID);
+  if (link) {
+    link.remove();
+  }
+});
+</script>

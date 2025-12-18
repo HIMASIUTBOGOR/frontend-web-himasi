@@ -1,6 +1,5 @@
 import "./scss/main.scss";
 // Import HIMASI template styles globally to match design
-import "../template/himasi/css/style.css";
 
 import { createApp } from "vue";
 import App from "./App.vue";
