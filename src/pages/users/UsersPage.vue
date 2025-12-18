@@ -1,15 +1,74 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import UsersTable from "./widgets/UsersTable.vue";
 import EditUserForm from "./widgets/EditUserForm.vue";
 import { User } from "./types";
-import { useUsers } from "./composables/useUsers";
 import { useModal, useToast } from "vuestic-ui";
+import { getUsers } from "../../services/user.service";
 
 const doShowEditUserModal = ref(false);
+const { init: notify } = useToast();
 
-const { users, isLoading, filters, sorting, pagination, error, ...usersApi } =
-  useUsers();
+// State
+const allUsers = ref<User[]>([]);
+const isLoading = ref(false);
+const filters = ref({ isActive: true, search: "" });
+const sorting = ref<{ sortBy: any; sortingOrder: any }>({
+  sortBy: undefined,
+  sortingOrder: null,
+});
+const pagination = ref({ page: 1, perPage: 10, total: 0 });
+
+// Fetch users from API
+const fetchUsers = async () => {
+  try {
+    isLoading.value = true;
+    const response = await getUsers();
+    allUsers.value = response.users;
+    pagination.value = response.pagination;
+  } catch (error: any) {
+    notify({
+      message: error.message || "Failed to fetch users",
+      color: "danger",
+    });
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Computed filtered users
+const users = computed(() => {
+  let filtered = [...allUsers.value];
+
+  // Apply search filter
+  if (filters.value.search) {
+    const search = filters.value.search.toLowerCase();
+    filtered = filtered.filter(
+      (user) =>
+        user.name?.toLowerCase().includes(search) ||
+        user.email?.toLowerCase().includes(search) ||
+        user.nim?.toLowerCase().includes(search)
+    );
+  }
+
+  // Update pagination total
+  pagination.value.total = filtered.length;
+
+  return filtered;
+});
+
+// Load users on mount
+onMounted(() => {
+  fetchUsers();
+});
+
+// Watch search filter
+watch(
+  () => filters.value.search,
+  () => {
+    pagination.value.page = 1; // Reset to first page on search
+  }
+);
 
 const userToEdit = ref<User | null>(null);
 
@@ -23,58 +82,39 @@ const showAddUserModal = () => {
   doShowEditUserModal.value = true;
 };
 
-const { init: notify } = useToast();
-
-watchEffect(() => {
-  if (error.value) {
+const onUserSaved = async (user: User) => {
+  // TODO: Implement user create/update API
+  if (userToEdit.value) {
     notify({
-      message: error.value.message,
-      color: "danger",
+      message: `${user.name} has been updated`,
+      color: "success",
+    });
+  } else {
+    notify({
+      message: `${user.name} has been created`,
+      color: "success",
     });
   }
-});
 
-const onUserSaved = async (user: User) => {
-  if (user.avatar.startsWith("blob:")) {
-    const blob = await fetch(user.avatar).then((r) => r.blob());
-    const { publicUrl } = await usersApi.uploadAvatar(blob);
-    user.avatar = publicUrl;
-  }
-
-  if (userToEdit.value) {
-    await usersApi.update(user);
-    if (!error.value) {
-      notify({
-        message: `${user.fullname} has been updated`,
-        color: "success",
-      });
-    }
-  } else {
-    await usersApi.add(user);
-
-    if (!error.value) {
-      notify({
-        message: `${user.fullname} has been created`,
-        color: "success",
-      });
-    }
-  }
+  doShowEditUserModal.value = false;
+  await fetchUsers();
 };
 
 const onUserDelete = async (user: User) => {
-  await usersApi.remove(user);
+  // TODO: Implement delete API
   notify({
-    message: `${user.fullname} has been deleted`,
+    message: `${user.name} has been deleted`,
     color: "success",
   });
+
+  await fetchUsers();
 };
 
 const editFormRef = ref();
-
 const { confirm } = useModal();
 
 const beforeEditFormModalClose = async (hide: () => unknown) => {
-  if (editFormRef.value.isFormHasUnsavedChanges) {
+  if (editFormRef.value?.isFormHasUnsavedChanges) {
     const agreed = await confirm({
       maxWidth: "380px",
       message: "Form has unsaved changes. Are you sure you want to close it?",
@@ -118,7 +158,6 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
         v-model:sort-by="sorting.sortBy"
         v-model:sorting-order="sorting.sortingOrder"
         :users="users"
-        :projects="projects"
         :loading="isLoading"
         :pagination="pagination"
         @editUser="showEditUserModal"

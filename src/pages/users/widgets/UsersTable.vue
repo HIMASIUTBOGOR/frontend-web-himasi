@@ -1,28 +1,24 @@
 <script setup lang="ts">
 import { defineVaDataTableColumns, useModal } from "vuestic-ui";
-import { User, UserRole } from "../types";
+import { User } from "../types";
 import UserAvatar from "./UserAvatar.vue";
 import { PropType, computed, toRef } from "vue";
 import { Pagination, Sorting } from "../../../data/pages/users";
 import { useVModel } from "@vueuse/core";
-import { Project } from "../../projects/types";
 
 const columns = defineVaDataTableColumns([
-  { label: "Full Name", key: "fullname", sortable: true },
+  { label: "Avatar", key: "avatar", sortable: true },
+  { label: "Full Name", key: "name", sortable: true },
   { label: "Email", key: "email", sortable: true },
-  { label: "Username", key: "username", sortable: true },
+  { label: "NIM", key: "nim", sortable: true },
   { label: "Role", key: "role", sortable: true },
-  { label: "Projects", key: "projects", sortable: true },
+  { label: "Jabatan", key: "jabatan", sortable: true },
   { label: " ", key: "actions", align: "right" },
 ]);
 
 const props = defineProps({
   users: {
     type: Array as PropType<User[]>,
-    required: true,
-  },
-  projects: {
-    type: Array as PropType<Project[]>,
     required: true,
   },
   loading: { type: Boolean, default: false },
@@ -45,14 +41,8 @@ const users = toRef(props, "users");
 const sortByVModel = useVModel(props, "sortBy", emit);
 const sortingOrderVModel = useVModel(props, "sortingOrder", emit);
 
-const roleColors: Record<UserRole, string> = {
-  admin: "danger",
-  user: "background-element",
-  owner: "warning",
-};
-
 const totalPages = computed(() =>
-  Math.ceil(props.pagination.total / props.pagination.perPage),
+  Math.ceil(props.pagination.total / props.pagination.perPage)
 );
 
 const { confirm } = useModal();
@@ -60,7 +50,7 @@ const { confirm } = useModal();
 const onUserDelete = async (user: User) => {
   const agreed = await confirm({
     title: "Delete user",
-    message: `Are you sure you want to delete ${user.fullname}?`,
+    message: `Are you sure you want to delete ${user.name}?`,
     okText: "Delete",
     cancelText: "Cancel",
     size: "small",
@@ -70,32 +60,6 @@ const onUserDelete = async (user: User) => {
   if (agreed) {
     emit("delete-user", user);
   }
-};
-
-const formatProjectNames = (projects: Project["id"][]) => {
-  const names = projects.reduce((acc, p) => {
-    const project = props.projects?.find(({ id }) => p === id);
-
-    if (project) {
-      acc.push(project.project_name);
-    }
-
-    return acc;
-  }, [] as string[]);
-  if (names.length === 0) return "No projects";
-  if (names.length <= 2) {
-    return names.map((name) => name).join(", ");
-  }
-
-  return (
-    names
-      .slice(0, 2)
-      .map((name) => name)
-      .join(", ") +
-    " + " +
-    (names.length - 2) +
-    " more"
-  );
 };
 </script>
 
@@ -107,16 +71,20 @@ const formatProjectNames = (projects: Project["id"][]) => {
     :items="users"
     :loading="$props.loading"
   >
-    <template #cell(fullname)="{ rowData }">
+    <template #cell(avatar)="{ rowData }">
       <div class="flex items-center gap-2 max-w-[230px] ellipsis">
         <UserAvatar :user="rowData as User" size="small" />
-        {{ rowData.fullname }}
+      </div>
+    </template>
+    <template #cell(name)="{ rowData }">
+      <div class="flex items-center gap-2 max-w-[230px] ellipsis">
+        {{ rowData.name }}
       </div>
     </template>
 
-    <template #cell(username)="{ rowData }">
+    <template #cell(nim)="{ rowData }">
       <div class="max-w-[120px] ellipsis">
-        {{ rowData.username }}
+        {{ rowData.nim }}
       </div>
     </template>
 
@@ -126,17 +94,8 @@ const formatProjectNames = (projects: Project["id"][]) => {
       </div>
     </template>
 
-    <template #cell(role)="{ rowData }">
-      <VaBadge
-        :text="rowData.role"
-        :color="roleColors[rowData.role as UserRole]"
-      />
-    </template>
-
     <template #cell(projects)="{ rowData }">
-      <div class="ellipsis max-w-[300px] lg:max-w-[450px]">
-        {{ formatProjectNames(rowData.projects) }}
-      </div>
+      <div class="ellipsis max-w-[300px] lg:max-w-[450px]"></div>
     </template>
 
     <template #cell(actions)="{ rowData }">
