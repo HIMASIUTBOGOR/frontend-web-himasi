@@ -50,6 +50,11 @@ const routes: Array<RouteRecordRaw> = [
       },
       // User Management
       {
+        name: "Permission",
+        path: "user/permission",
+        component: () => import("../pages/permission/PermissionPage.vue"),
+      },
+      {
         name: "users",
         path: "user/user",
         component: () => import("../pages/users/UsersPage.vue"),
@@ -70,7 +75,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         name: "faq",
-        path: "faq",
+        path: "cms/faq",
         component: () => import("../pages/faq/FaqPage.vue"),
       },
     ],
