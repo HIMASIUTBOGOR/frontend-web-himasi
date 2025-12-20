@@ -76,6 +76,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "cms/activities",
         component: () => import("../pages/cms/activity/ActivityPage.vue"),
       },
+      {
+        name: "Benefit",
+        path: "cms/benefits",
+        component: () => import("../pages/cms/benefit/BenefitPage.vue"),
+      },
 
       // Settings & Preferences
       {

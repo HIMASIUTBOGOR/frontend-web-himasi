@@ -4,3 +4,9 @@ export type payloiadActivity = {
   is_active: boolean;
   upload_at: Date | string;
 };
+
+export type payloadBenefit = {
+  photo: File | null;
+  title: string;
+  desc: string;
+};
