@@ -1,9 +1,6 @@
-export type payloadDepartemen = {
-  icon: string;
-  title: string;
-  desc: string;
-};
-export type payloadProker = {
+export type Proker = {
+  id: string;
+  departemen: string;
   departemen_id: string;
   photo: string;
   title: string;

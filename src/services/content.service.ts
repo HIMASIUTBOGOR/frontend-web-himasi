@@ -28,3 +28,13 @@ export const getContentDepartments = async () => {
     throw new Error(msg);
   }
 };
+
+export const getContentProkers = async () => {
+  try {
+    const response = await http.get("/api/content/prokers");
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to fetch prokers";
+    throw new Error(msg);
+  }
+};

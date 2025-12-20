@@ -22,14 +22,25 @@
         </button>
       </div>
 
-      <div class="program-content">
+      <div v-if="loading" class="text-center py-8">
+        <p>Memuat data...</p>
+      </div>
+
+      <div
+        v-else-if="currentProgram.items.length === 0"
+        class="text-center py-8"
+      >
+        <p>Belum ada program kerja untuk departemen ini.</p>
+      </div>
+
+      <div v-else class="program-content">
         <div class="program-list">
           <div
             v-for="item in currentProgram.items"
-            :key="item.target"
+            :key="item.id"
             class="program-item"
-            :class="{ active: selectedItem === item.target }"
-            @click="selectedItem = item.target"
+            :class="{ active: selectedItem === item.id }"
+            @click="selectedItem = item.id"
           >
             {{ item.title }}
           </div>
@@ -47,9 +58,17 @@
         <div class="program-details">
           <h3>{{ currentDetail.title }}</h3>
           <p>{{ currentDetail.desc }}</p>
-          <a href="#join" class="details-link"
-            >Ikuti Program <i class="fas fa-arrow-right"></i
-          ></a>
+          <a
+            v-if="currentDetail.action_link"
+            :href="currentDetail.action_link"
+            target="_blank"
+            class="details-link"
+          >
+            Ikuti Program <i class="fas fa-arrow-right"></i>
+          </a>
+          <a v-else href="#join" class="details-link">
+            Ikuti Program <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
       </div>
     </div>
@@ -57,137 +76,114 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
+import { getContentProkers } from "../../../../services/content.service";
 
-type ProgramKey = "all" | "akademik" | "media" | "psdm" | "acara";
-type ProgramItemKey = "proker1" | "proker2" | "proker3" | "proker4";
+type Proker = {
+  id: string;
+  departemen_id: string;
+  departemen: string;
+  photo: string;
+  title: string;
+  desc: string;
+  action_link: string | null;
+  is_active: number;
+};
 
-const filters = [
-  { key: "all" as ProgramKey, label: "Semua Departemen" },
-  { key: "akademik" as ProgramKey, label: "Akademik & Keilmuan" },
-  { key: "media" as ProgramKey, label: "Media & Publikasi" },
-  { key: "psdm" as ProgramKey, label: "PSDM" },
-  { key: "acara" as ProgramKey, label: "Acara & Humas" },
-];
+type Department = {
+  id: string;
+  departemen: string;
+  prokers: Proker[];
+};
 
-const programs = {
-  all: {
-    label: "Semua Departemen",
-    img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    alt: "Kegiatan HIMASI",
-    items: [
-      {
-        target: "proker1" as ProgramItemKey,
-        title: "Belajar Bersama (Study Club)",
-      },
-      { target: "proker2" as ProgramItemKey, title: "Webinar Teknologi" },
-      { target: "proker3" as ProgramItemKey, title: "Latihan Kepemimpinan" },
-      { target: "proker4" as ProgramItemKey, title: "HIMASI Cup" },
-    ],
-    details: {
-      proker1: {
-        title: "Belajar Bersama (Study Club)",
-        desc: "Kegiatan rutin untuk membahas materi perkuliahan dan belajar teknologi baru bersama-sama. Dipandu oleh mentor dari mahasiswa senior atau alumni.",
-      },
-      proker2: {
-        title: "Webinar Teknologi",
-        desc: "Agenda berbagi wawasan teknologi terbaru bersama praktisi dan akademisi.",
-      },
-      proker3: {
-        title: "Latihan Kepemimpinan",
-        desc: "Pelatihan soft skill untuk membangun kemampuan leadership dan organisasi.",
-      },
-      proker4: {
-        title: "HIMASI Cup",
-        desc: "Kompetisi olahraga internal untuk meningkatkan kekompakan dan kesehatan.",
-      },
-    },
-  },
-  akademik: {
-    label: "Akademik & Keilmuan",
-    img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    alt: "Akademik",
-    items: [
-      {
-        target: "proker1" as ProgramItemKey,
-        title: "Belajar Bersama (Study Club)",
-      },
-      { target: "proker2" as ProgramItemKey, title: "Webinar Teknologi" },
-    ],
-    details: {
-      proker1: {
-        title: "Belajar Bersama (Study Club)",
-        desc: "Kegiatan rutin untuk membahas materi perkuliahan dan belajar teknologi baru bersama-sama. Dipandu oleh mentor dari mahasiswa senior atau alumni.",
-      },
-      proker2: {
-        title: "Webinar Teknologi",
-        desc: "Agenda berbagi wawasan teknologi terbaru bersama praktisi dan akademisi.",
-      },
-      proker3: { title: "", desc: "" },
-      proker4: { title: "", desc: "" },
-    },
-  },
-  media: {
-    label: "Media & Publikasi",
-    img: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    alt: "Media & Publikasi",
-    items: [
-      { target: "proker2" as ProgramItemKey, title: "Webinar Teknologi" },
-    ],
-    details: {
-      proker1: { title: "", desc: "" },
-      proker2: {
-        title: "Webinar Teknologi",
-        desc: "Agenda berbagi wawasan teknologi terbaru bersama praktisi dan akademisi.",
-      },
-      proker3: { title: "", desc: "" },
-      proker4: { title: "", desc: "" },
-    },
-  },
-  psdm: {
-    label: "PSDM",
-    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    alt: "PSDM",
-    items: [
-      { target: "proker3" as ProgramItemKey, title: "Latihan Kepemimpinan" },
-    ],
-    details: {
-      proker1: { title: "", desc: "" },
-      proker2: { title: "", desc: "" },
-      proker3: {
-        title: "Latihan Kepemimpinan",
-        desc: "Pelatihan soft skill untuk membangun kemampuan leadership dan organisasi.",
-      },
-      proker4: { title: "", desc: "" },
-    },
-  },
-  acara: {
-    label: "Acara & Humas",
-    img: "https://images.unsplash.com/photo-1615109398623-88346a601842?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    alt: "Acara & Humas",
-    items: [{ target: "proker4" as ProgramItemKey, title: "HIMASI Cup" }],
-    details: {
-      proker1: { title: "", desc: "" },
-      proker2: { title: "", desc: "" },
-      proker3: { title: "", desc: "" },
-      proker4: {
-        title: "HIMASI Cup",
-        desc: "Kompetisi olahraga internal untuk meningkatkan kekompakan dan kesehatan.",
-      },
-    },
-  },
-} as const;
+const departmentsData = ref<Department[]>([]);
+const selectedFilter = ref<string>("all");
+const selectedItem = ref<string>("");
+const loading = ref(true);
 
-const selectedFilter = ref<ProgramKey>("all");
-const selectedItem = ref<ProgramItemKey>("proker1");
+const fetchProkers = async () => {
+  loading.value = true;
+  try {
+    const response = await getContentProkers();
+    departmentsData.value = response.data;
+    // Set default selected item to first proker if available
+    if (departmentsData.value.length > 0) {
+      const firstDeptWithProkers = departmentsData.value.find(
+        (dept) => dept.prokers.length > 0
+      );
+      if (firstDeptWithProkers && firstDeptWithProkers.prokers.length > 0) {
+        selectedItem.value = firstDeptWithProkers.prokers[0].id;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch prokers:", error);
+  } finally {
+    loading.value = false;
+  }
+};
 
-const currentProgram = computed(() => programs[selectedFilter.value]);
-const currentVisual = computed(() => ({
-  img: currentProgram.value.img,
-  alt: currentProgram.value.alt,
-  label: currentProgram.value.label,
-}));
-const currentDetail = computed(
-  () => currentProgram.value.details[selectedItem.value],
-);
+onMounted(() => {
+  fetchProkers();
+});
+
+const filters = computed(() => {
+  const baseFilters = [{ key: "all", label: "Semua Departemen" }];
+  const deptFilters = departmentsData.value.map((dept) => ({
+    key: dept.id,
+    label: dept.departemen,
+  }));
+  return [...baseFilters, ...deptFilters];
+});
+
+const currentProgram = computed(() => {
+  if (selectedFilter.value === "all") {
+    // Show all prokers from all departments
+    const allProkers = departmentsData.value.flatMap((dept) => dept.prokers);
+    return {
+      label: "Semua Departemen",
+      items: allProkers,
+      departemen: "Semua Departemen",
+    };
+  } else {
+    // Show prokers from selected department
+    const dept = departmentsData.value.find(
+      (d) => d.id === selectedFilter.value
+    );
+    return {
+      label: dept?.departemen || "",
+      items: dept?.prokers || [],
+      departemen: dept?.departemen || "",
+    };
+  }
+});
+
+const currentVisual = computed(() => {
+  const selectedProker = currentProgram.value.items.find(
+    (item) => item.id === selectedItem.value
+  );
+
+  return {
+    img: selectedProker?.photo || currentProgram.value.items[0]?.photo || "",
+    alt:
+      selectedProker?.departemen ||
+      currentProgram.value.items[0]?.departemen ||
+      currentProgram.value.departemen,
+    label:
+      selectedProker?.departemen ||
+      currentProgram.value.items[0]?.departemen ||
+      currentProgram.value.departemen,
+  };
+});
+
+const currentDetail = computed(() => {
+  const proker = currentProgram.value.items.find(
+    (item) => item.id === selectedItem.value
+  );
+
+  return {
+    title: proker?.title || "",
+    desc: proker?.desc || "",
+    action_link: proker?.action_link,
+  };
+});
 </script>

@@ -86,6 +86,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "cms/departments",
         component: () => import("../pages/cms/departemen/DepartemenPage.vue"),
       },
+      {
+        name: "Proker",
+        path: "cms/proker",
+        component: () => import("../pages/cms/proker/ProkerPage.vue"),
+      },
 
       // Settings & Preferences
       {
