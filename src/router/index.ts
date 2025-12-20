@@ -64,6 +64,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "user/user",
         component: () => import("../pages/users/UsersPage.vue"),
       },
+      {
+        name: "Menu",
+        path: "user/menu",
+        component: () => import("../pages/menu/MenuPage.vue"),
+      },
       // CMS Management
       // Here
 

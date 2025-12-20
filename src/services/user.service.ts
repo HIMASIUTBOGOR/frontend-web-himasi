@@ -1,5 +1,9 @@
 import http from "./http";
-import { payloadPermission, payloadRole } from "../interfaces/IUser";
+import {
+  payloadMenu,
+  payloadPermission,
+  payloadRole,
+} from "../interfaces/IUser";
 
 export const getUsers = async (params?: {
   limit?: number;
@@ -213,6 +217,35 @@ export const getMenu = async (params?: {
     };
   } catch (error: any) {
     const msg = error?.response?.data?.message || "Failed to fetch permissions";
+    throw new Error(msg);
+  }
+};
+
+export const createMenu = async (data: payloadMenu) => {
+  try {
+    const response = await http.post("/api/menu", data);
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to create menu";
+    throw new Error(msg);
+  }
+};
+
+export const updateMenu = async (id: string, data: payloadMenu) => {
+  try {
+    const response = await http.put(`/api/menu/${id}`, data);
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to update menu";
+    throw new Error(msg);
+  }
+};
+
+export const deleteMenu = async (id: string) => {
+  try {
+    await http.delete(`/api/menu/${id}`);
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to delete the menu";
     throw new Error(msg);
   }
 };

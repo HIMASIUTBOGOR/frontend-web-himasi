@@ -30,3 +30,12 @@ export type payloadRole = {
   guard_name: string;
   permissions: string[];
 };
+
+export type payloadMenu = {
+  name: string;
+  url: string;
+  icon?: string;
+  permission_name: string | null;
+  parent_id: string | null;
+  order: number;
+};
