@@ -31,6 +31,10 @@ export function usePermissions(resource: string) {
     return authStore.permissions.includes(`${resource}.view`);
   });
 
+  const canShow = computed(() => {
+    return authStore.permissions.includes(`${resource}.show`);
+  });
+
   const hasPermission = (permission: string) => {
     return authStore.permissions.includes(permission);
   };
@@ -40,6 +44,7 @@ export function usePermissions(resource: string) {
     canEdit,
     canDelete,
     canView,
+    canShow,
     hasPermission,
   };
 }

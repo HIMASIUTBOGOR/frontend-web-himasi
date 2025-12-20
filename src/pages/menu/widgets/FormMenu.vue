@@ -48,7 +48,7 @@ const fetchParentMenus = async () => {
     const response = await getMenu({ limit: 1000, page: 1 });
     // Filter out current menu and only show parent menus (those without parent_id)
     parentMenus.value = response.menu.filter(
-      (m) => (!props.menu || m.id !== props.menu.id) && !m.parent_id
+      (m: Menu) => (!props.menu || m.id !== props.menu.id) && !m.parent_id
     );
   } catch (error) {
     console.error("Failed to fetch parent menus:", error);

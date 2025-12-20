@@ -155,6 +155,7 @@ const {
   canCreate: canCreatePermission,
   canEdit: canEditPermission,
   canDelete: canDeletePermission,
+  canView: canViewPermission,
 } = usePermissions("permission");
 </script>
 
@@ -163,34 +164,45 @@ const {
 
   <VaCard>
     <VaCardContent>
-      <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
-        <div class="flex flex-col md:flex-row gap-2 justify-start">
-          <VaInput
-            v-model="filters.search"
-            placeholder="Search permissions..."
-            class="w-full md:w-64"
-          >
-            <template #prependInner>
-              <VaIcon name="search" color="secondary" size="small" />
-            </template>
-          </VaInput>
-        </div>
-        <VaButton v-if="canCreatePermission" @click="showAddPermissionModal">
-          Add Permission
-        </VaButton>
+      <div
+        v-if="!canViewPermission"
+        class="flex items-center justify-center py-8"
+      >
+        <VaAlert color="warning" border="top">
+          You don't have permission to view this page.
+        </VaAlert>
       </div>
 
-      <PermissionTable
-        :permission="permissions"
-        :loading="isLoading"
-        :pagination="pagination"
-        :can-edit="canEditPermission"
-        :can-delete="canDeletePermission"
-        v-model:sortBy="sorting.sortBy"
-        v-model:sortingOrder="sorting.sortingOrder"
-        @edit-permission="showEditPermissionModal"
-        @delete-permission="onPermissionDelete"
-      />
+      <template v-else>
+        <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
+          <div class="flex flex-col md:flex-row gap-2 justify-start">
+            <VaInput
+              v-model="filters.search"
+              placeholder="Search permissions..."
+              class="w-full md:w-64"
+            >
+              <template #prependInner>
+                <VaIcon name="search" color="secondary" size="small" />
+              </template>
+            </VaInput>
+          </div>
+          <VaButton v-if="canCreatePermission" @click="showAddPermissionModal">
+            Add Permission
+          </VaButton>
+        </div>
+
+        <PermissionTable
+          :permission="permissions"
+          :loading="isLoading"
+          :pagination="pagination"
+          :can-edit="canEditPermission"
+          :can-delete="canDeletePermission"
+          v-model:sortBy="sorting.sortBy"
+          v-model:sortingOrder="sorting.sortingOrder"
+          @edit-permission="showEditPermissionModal"
+          @delete-permission="onPermissionDelete"
+        />
+      </template>
     </VaCardContent>
   </VaCard>
 

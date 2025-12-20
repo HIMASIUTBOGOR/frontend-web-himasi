@@ -155,6 +155,7 @@ const {
   canCreate: canCreateUser,
   canEdit: canEditUser,
   canDelete: canDeleteUser,
+  canView: canViewUser,
 } = usePermissions("user");
 </script>
 
@@ -163,31 +164,39 @@ const {
 
   <VaCard>
     <VaCardContent>
-      <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
-        <div class="flex flex-col md:flex-row gap-2 justify-start">
-          <VaInput v-model="filters.search" placeholder="Search">
-            <template #prependInner>
-              <VaIcon name="search" color="secondary" size="small" />
-            </template>
-          </VaInput>
-        </div>
-
-        <VaButton v-if="canCreateUser" @click="showAddUserModal"
-          >Add User</VaButton
-        >
+      <div v-if="!canViewUser" class="flex items-center justify-center py-8">
+        <VaAlert color="warning" border="top">
+          You don't have permission to view this page.
+        </VaAlert>
       </div>
 
-      <UsersTable
-        v-model:sort-by="sorting.sortBy"
-        v-model:sorting-order="sorting.sortingOrder"
-        :users="users"
-        :loading="isLoading"
-        :pagination="pagination"
-        :can-edit="canEditUser"
-        :can-delete="canDeleteUser"
-        @editUser="showEditUserModal"
-        @deleteUser="onUserDelete"
-      />
+      <template v-else>
+        <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
+          <div class="flex flex-col md:flex-row gap-2 justify-start">
+            <VaInput v-model="filters.search" placeholder="Search">
+              <template #prependInner>
+                <VaIcon name="search" color="secondary" size="small" />
+              </template>
+            </VaInput>
+          </div>
+
+          <VaButton v-if="canCreateUser" @click="showAddUserModal"
+            >Add User</VaButton
+          >
+        </div>
+
+        <UsersTable
+          v-model:sort-by="sorting.sortBy"
+          v-model:sorting-order="sorting.sortingOrder"
+          :users="users"
+          :loading="isLoading"
+          :pagination="pagination"
+          :can-edit="canEditUser"
+          :can-delete="canDeleteUser"
+          @editUser="showEditUserModal"
+          @deleteUser="onUserDelete"
+        />
+      </template>
     </VaCardContent>
   </VaCard>
 

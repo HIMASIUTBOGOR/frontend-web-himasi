@@ -159,6 +159,7 @@ const {
   canCreate: canCreateRole,
   canEdit: canEditRole,
   canDelete: canDeleteRole,
+  canView: canViewRole,
 } = usePermissions("role");
 </script>
 
@@ -167,34 +168,42 @@ const {
 
   <VaCard>
     <VaCardContent>
-      <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
-        <div class="flex flex-col md:flex-row gap-2 justify-start">
-          <VaInput
-            v-model="filters.search"
-            placeholder="Search role..."
-            class="w-full md:w-64"
-          >
-            <template #prependInner>
-              <VaIcon name="search" color="secondary" size="small" />
-            </template>
-          </VaInput>
-        </div>
-        <VaButton v-if="canCreateRole" @click="showAddRoleModal">
-          Add Role
-        </VaButton>
+      <div v-if="!canViewRole" class="flex items-center justify-center py-8">
+        <VaAlert color="warning" border="top">
+          You don't have permission to view this page.
+        </VaAlert>
       </div>
 
-      <RoleTable
-        :role="roles"
-        :loading="isLoading"
-        :pagination="pagination"
-        :can-edit="canEditRole"
-        :can-delete="canDeleteRole"
-        v-model:sortBy="sorting.sortBy"
-        v-model:sortingOrder="sorting.sortingOrder"
-        @edit-role="showEditRoleModal"
-        @delete-role="onRoleDelete"
-      />
+      <template v-else>
+        <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
+          <div class="flex flex-col md:flex-row gap-2 justify-start">
+            <VaInput
+              v-model="filters.search"
+              placeholder="Search role..."
+              class="w-full md:w-64"
+            >
+              <template #prependInner>
+                <VaIcon name="search" color="secondary" size="small" />
+              </template>
+            </VaInput>
+          </div>
+          <VaButton v-if="canCreateRole" @click="showAddRoleModal">
+            Add Role
+          </VaButton>
+        </div>
+
+        <RoleTable
+          :role="roles"
+          :loading="isLoading"
+          :pagination="pagination"
+          :can-edit="canEditRole"
+          :can-delete="canDeleteRole"
+          v-model:sortBy="sorting.sortBy"
+          v-model:sortingOrder="sorting.sortingOrder"
+          @edit-role="showEditRoleModal"
+          @delete-role="onRoleDelete"
+        />
+      </template>
     </VaCardContent>
   </VaCard>
 

@@ -7,11 +7,11 @@ import {
   createMenu,
   getMenu,
 } from "../../services/user.service";
+import MenuTable from "./widgets/MenuTable.vue";
 import { Menu } from "./type";
 import { usePermissions } from "../../composables/usePermissions";
 import { payloadMenu } from "../../interfaces/IUser";
 import FormMenu from "./widgets/FormMenu.vue";
-import MenuTable from "./widgets/MenuTable.vue";
 
 const doShowEditMenuModal = ref(false);
 const { init: notify } = useToast();
@@ -158,6 +158,7 @@ const {
   canCreate: canCreateMenu,
   canEdit: canEditMenu,
   canDelete: canDeleteMenu,
+  canView: canViewMenu,
 } = usePermissions("menu");
 </script>
 
@@ -165,34 +166,42 @@ const {
   <h1 class="page-title">Menu Page</h1>
   <VaCard>
     <VaCardContent>
-      <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
-        <div class="flex flex-col md:flex-row gap-2 justify-start">
-          <VaInput
-            v-model="filters.search"
-            placeholder="Search menus..."
-            class="w-full md:w-64"
-          >
-            <template #prependInner>
-              <VaIcon name="search" color="secondary" size="small" />
-            </template>
-          </VaInput>
-        </div>
-        <VaButton v-if="canCreateMenu" @click="showAddMenuModal">
-          Add Menu
-        </VaButton>
+      <div v-if="!canViewMenu" class="flex items-center justify-center py-8">
+        <VaAlert color="warning" border="top">
+          You don't have permission to view this page.
+        </VaAlert>
       </div>
 
-      <MenuTable
-        :menu="menus"
-        :loading="isLoading"
-        :pagination="pagination"
-        :can-edit="canEditMenu"
-        :can-delete="canDeleteMenu"
-        v-model:sortBy="sorting.sortBy"
-        v-model:sortingOrder="sorting.sortingOrder"
-        @edit-menu="showEditMenuModal"
-        @delete-menu="onMenuDelete"
-      />
+      <template v-else>
+        <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
+          <div class="flex flex-col md:flex-row gap-2 justify-start">
+            <VaInput
+              v-model="filters.search"
+              placeholder="Search menus..."
+              class="w-full md:w-64"
+            >
+              <template #prependInner>
+                <VaIcon name="search" color="secondary" size="small" />
+              </template>
+            </VaInput>
+          </div>
+          <VaButton v-if="canCreateMenu" @click="showAddMenuModal">
+            Add Menu
+          </VaButton>
+        </div>
+
+        <MenuTable
+          :menu="menus"
+          :loading="isLoading"
+          :pagination="pagination"
+          :can-edit="canEditMenu"
+          :can-delete="canDeleteMenu"
+          v-model:sortBy="sorting.sortBy"
+          v-model:sortingOrder="sorting.sortingOrder"
+          @edit-menu="showEditMenuModal"
+          @delete-menu="onMenuDelete"
+        />
+      </template>
     </VaCardContent>
   </VaCard>
 
