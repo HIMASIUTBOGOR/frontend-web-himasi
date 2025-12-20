@@ -10,6 +10,7 @@ import {
 import { Permission } from "./type";
 import PermissionTable from "./widgets/PermissionTable.vue";
 import AddPermissionForm from "./widgets/AddPermissionForm.vue";
+import { usePermissions } from "../../composables/usePermissions";
 
 const doShowEditPermissionModal = ref(false);
 const { init: notify } = useToast();
@@ -148,6 +149,13 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
     hide();
   }
 };
+
+// Check user permissions using reusable composable
+const {
+  canCreate: canCreatePermission,
+  canEdit: canEditPermission,
+  canDelete: canDeletePermission,
+} = usePermissions("permission");
 </script>
 
 <template>
@@ -167,13 +175,17 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
             </template>
           </VaInput>
         </div>
-        <VaButton @click="showAddPermissionModal">Add Permission</VaButton>
+        <VaButton v-if="canCreatePermission" @click="showAddPermissionModal">
+          Add Permission
+        </VaButton>
       </div>
 
       <PermissionTable
         :permission="permissions"
         :loading="isLoading"
         :pagination="pagination"
+        :can-edit="canEditPermission"
+        :can-delete="canDeletePermission"
         v-model:sortBy="sorting.sortBy"
         v-model:sortingOrder="sorting.sortingOrder"
         @edit-permission="showEditPermissionModal"
