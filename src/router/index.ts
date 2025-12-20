@@ -50,12 +50,12 @@ const routes: Array<RouteRecordRaw> = [
       },
       // User Management
       {
-        name: "Permission",
+        name: "permission",
         path: "user/permission",
         component: () => import("../pages/permission/PermissionPage.vue"),
       },
       {
-        name: "Role",
+        name: "role",
         path: "user/role",
         component: () => import("../pages/role/RolePage.vue"),
       },
@@ -65,12 +65,17 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("../pages/users/UsersPage.vue"),
       },
       {
-        name: "Menu",
+        name: "menu",
         path: "user/menu",
         component: () => import("../pages/menu/MenuPage.vue"),
       },
       // CMS Management
       // Here
+      {
+        name: "Kegitatan",
+        path: "cms/activities",
+        component: () => import("../pages/cms/activity/ActivityPage.vue"),
+      },
 
       // Settings & Preferences
       {

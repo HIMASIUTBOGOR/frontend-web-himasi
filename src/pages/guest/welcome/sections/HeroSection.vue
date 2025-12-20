@@ -19,93 +19,46 @@
 
       <div class="hero-gallery-wrapper">
         <div class="hero-gallery-track">
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 1"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 2"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 3"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 4"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 5"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 6"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1615109398623-88346a601842?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 7"
-            />
+          <!-- First set of images -->
+          <div
+            v-for="activity in dataActivity"
+            :key="'first-' + activity.id"
+            class="gallery-item"
+          >
+            <img :src="activity.image" :alt="activity.desc" />
           </div>
 
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 1"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 2"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 3"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 4"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 5"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 6"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="https://images.unsplash.com/photo-1615109398623-88346a601842?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-              alt="Pengurus 7"
-            />
+          <!-- Duplicate for infinite scroll effect -->
+          <div
+            v-for="activity in dataActivity"
+            :key="'second-' + activity.id"
+            class="gallery-item"
+          >
+            <img :src="activity.image" :alt="activity.desc" />
           </div>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { getContentActivities } from "../../../../services/content.service";
+
+const dataActivity = ref([]);
+
+const fetchActivities = async () => {
+  try {
+    const response = await getContentActivities();
+    console.log(response);
+    dataActivity.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch activities:", error);
+  }
+};
+
+onMounted(() => {
+  fetchActivities();
+});
+</script>
