@@ -28,5 +28,5 @@ export type payloadPermission = {
 export type payloadRole = {
   name: string;
   guard_name: string;
-  permissions: number[];
+  permissions: string[];
 };

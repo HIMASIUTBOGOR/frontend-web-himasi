@@ -5,19 +5,16 @@
       :offset="[9, 0]"
       class="profile-dropdown"
       stick-to-edges
-      close-on-anchor-click
       close-on-content-click
       :close-on-click-outside="true"
     >
       <template #anchor>
-        <div @click="toggleDropdown">
-          <VaButton preset="secondary" color="textPrimary">
-            <span class="profile-dropdown__anchor min-w-max">
-              <slot />
-              <VaAvatar :size="32" color="warning"> 🙈 </VaAvatar>
-            </span>
-          </VaButton>
-        </div>
+        <VaButton preset="secondary" color="textPrimary">
+          <span class="profile-dropdown__anchor min-w-max">
+            <slot />
+            <VaAvatar :size="32" color="warning"> 🙈 </VaAvatar>
+          </span>
+        </VaButton>
       </template>
       <VaDropdownContent
         class="profile-dropdown__content md:w-60 px-0 py-4 w-full"
@@ -83,22 +80,17 @@ withDefaults(
   }>(),
   {
     options: () => [
-      {
-        name: "account",
-        separator: true,
-        list: [
-          // {
-          //   name: "profile",
-          //   to: "preferences",
-          //   icon: "mso-account_circle",
-          // },
-          {
-            name: "settings",
-            to: "settings",
-            icon: "mso-settings",
-          },
-        ],
-      },
+      // {
+      //   name: "account",
+      //   separator: true,
+      //   list: [
+      //     {
+      //       name: "settings",
+      //       to: "settings",
+      //       icon: "mso-settings",
+      //     },
+      //   ],
+      // },
       {
         name: "actions",
         separator: false,
@@ -120,12 +112,6 @@ const isShown = ref(false);
 watch(isShown, (newVal) => {
   console.log("Dropdown state changed:", newVal);
 });
-
-const toggleDropdown = () => {
-  console.log("Toggle clicked, current state:", isShown.value);
-  isShown.value = !isShown.value;
-  console.log("New state:", isShown.value);
-};
 
 const resolveLinkAttribute = (item: ProfileListItem) => {
   return item.to
@@ -188,15 +174,5 @@ const handleClick = async (item: ProfileListItem) => {
 
 :deep(.va-dropdown__content-wrapper) {
   z-index: 1001;
-  position: absolute;
-}
-
-:deep(.va-dropdown__content) {
-  z-index: 1002 !important;
-  position: relative;
-  display: block;
-  opacity: 1;
-  visibility: visible;
-  transform: none;
 }
 </style>
