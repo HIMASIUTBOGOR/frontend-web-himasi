@@ -28,6 +28,8 @@ const props = defineProps({
     type: String as PropType<Sorting["sortingOrder"]>,
     default: null,
   },
+  canEdit: { type: Boolean, default: false },
+  canDelete: { type: Boolean, default: false },
 });
 
 const emit = defineEmits<{
@@ -111,6 +113,7 @@ const onUserDelete = async (user: User) => {
     <template #cell(actions)="{ rowData }">
       <div class="flex gap-2 justify-end">
         <VaButton
+          v-if="canEdit"
           preset="primary"
           size="small"
           icon="mso-edit"
@@ -118,6 +121,7 @@ const onUserDelete = async (user: User) => {
           @click="$emit('edit-user', rowData as User)"
         />
         <VaButton
+          v-if="canDelete"
           preset="primary"
           size="small"
           icon="mso-delete"

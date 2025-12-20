@@ -10,6 +10,7 @@ import {
   updateUser,
   deleteUser,
 } from "../../services/user.service";
+import { usePermissions } from "../../composables/usePermissions";
 
 const doShowEditUserModal = ref(false);
 const { init: notify } = useToast();
@@ -148,6 +149,13 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
     hide();
   }
 };
+
+// Check user permissions using reusable composable
+const {
+  canCreate: canCreateUser,
+  canEdit: canEditUser,
+  canDelete: canDeleteUser,
+} = usePermissions("user");
 </script>
 
 <template>
@@ -157,22 +165,16 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
     <VaCardContent>
       <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
         <div class="flex flex-col md:flex-row gap-2 justify-start">
-          <!-- <VaButtonToggle
-            v-model="filters.isActive"
-            color="background-element"
-            border-color="background-element"
-            :options="[
-              { label: 'Active', value: true },
-              { label: 'Inactive', value: false },
-            ]"
-          /> -->
           <VaInput v-model="filters.search" placeholder="Search">
             <template #prependInner>
               <VaIcon name="search" color="secondary" size="small" />
             </template>
           </VaInput>
         </div>
-        <VaButton @click="showAddUserModal">Add User</VaButton>
+
+        <VaButton v-if="canCreateUser" @click="showAddUserModal"
+          >Add User</VaButton
+        >
       </div>
 
       <UsersTable
@@ -181,6 +183,8 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
         :users="users"
         :loading="isLoading"
         :pagination="pagination"
+        :can-edit="canEditUser"
+        :can-delete="canDeleteUser"
         @editUser="showEditUserModal"
         @deleteUser="onUserDelete"
       />
