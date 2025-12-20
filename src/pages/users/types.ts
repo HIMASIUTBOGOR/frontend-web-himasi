@@ -16,6 +16,7 @@ export type User = {
   email: string;
   nim: string;
   jabatan_id: string | null;
+  jabatan: string | null;
   avatar: string | null;
   roles: Role[];
   // Computed for compatibility

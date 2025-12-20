@@ -1,34 +1,99 @@
 import http from "./http";
-import { ApiResponse } from "../interfaces/IApi";
-import { GetUsersResponse, payloadPermission } from "../interfaces/IUser";
-import { User } from "../pages/users/types";
+import { payloadPermission, payloadUser } from "../interfaces/IUser";
 
-export const getUsers = async (): Promise<GetUsersResponse> => {
+export const getUsers = async (params?: {
+  limit?: number;
+  page?: number;
+  search?: string;
+}) => {
   try {
-    const response = await http.get("/api/users");
-    const apiData = response.data as ApiResponse;
-
-    // Transform data to add computed properties
-    const users = apiData.data.map((user: User) => ({
-      ...user,
-      fullname: user.name,
-      username: user.nim,
-      role: user.roles?.[0]?.name || "user",
-      active: true,
-      projects: [],
-      notes: "",
-    }));
-
+    const response = await http.get("/api/users", {
+      params: {
+        limit: params?.limit || 10,
+        page: params?.page || 1,
+        search: params?.search || "",
+      },
+    });
+    const apiData = response.data;
     return {
-      users,
-      pagination: {
-        page: 1,
-        perPage: 10,
-        total: users.length,
+      users: apiData.data,
+      meta: {
+        page: apiData.meta.current_page,
+        perPage: apiData.meta.per_page,
+        total: apiData.meta.total,
+        lastPage: apiData.meta.last_page,
       },
     };
   } catch (error: any) {
-    const msg = error?.response?.data?.message || "Failed to fetch users";
+    const msg = error?.response?.data?.message || "Failed to fetch permissions";
+    throw new Error(msg);
+  }
+};
+
+export const createUser = async (data: FormData) => {
+  try {
+    const response = await http.post("/api/user", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to create user";
+    throw new Error(msg);
+  }
+};
+
+export const updateUser = async (id: number, data: FormData) => {
+  try {
+    // Use POST with _method for Laravel to handle file uploads in PUT requests
+    data.append("_method", "PUT");
+    const response = await http.post(`/api/user/${id}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to update user";
+    throw new Error(msg);
+  }
+};
+
+export const deleteUser = async (id: number) => {
+  try {
+    await http.delete(`/api/user/${id}`);
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to delete the user";
+    throw new Error(msg);
+  }
+};
+
+export const getRoles = async (params?: {
+  limit?: number;
+  page?: number;
+  search?: string;
+}) => {
+  try {
+    const response = await http.get("/api/roles", {
+      params: {
+        limit: params?.limit || 10,
+        page: params?.page || 1,
+        search: params?.search || "",
+      },
+    });
+    const apiData = response.data;
+    return {
+      roles: apiData.data,
+      meta: {
+        page: apiData.meta.current_page,
+        perPage: apiData.meta.per_page,
+        total: apiData.meta.total,
+        lastPage: apiData.meta.last_page,
+      },
+    };
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to fetch permissions";
     throw new Error(msg);
   }
 };

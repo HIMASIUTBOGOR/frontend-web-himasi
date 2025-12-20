@@ -93,6 +93,16 @@ const onUserDelete = async (user: User) => {
         {{ rowData.email }}
       </div>
     </template>
+    <template #cell(role)="{ rowData }">
+      <div class="ellipsis max-w-[230px]">
+        {{ rowData.role }}
+      </div>
+    </template>
+    <template #cell(jabatan)="{ rowData }">
+      <div class="ellipsis max-w-[230px]">
+        {{ rowData.jabatan }}
+      </div>
+    </template>
 
     <template #cell(projects)="{ rowData }">
       <div class="ellipsis max-w-[300px] lg:max-w-[450px]"></div>

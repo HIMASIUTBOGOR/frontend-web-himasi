@@ -5,14 +5,19 @@
       :offset="[9, 0]"
       class="profile-dropdown"
       stick-to-edges
+      close-on-anchor-click
+      close-on-content-click
+      :close-on-click-outside="true"
     >
       <template #anchor>
-        <VaButton preset="secondary" color="textPrimary">
-          <span class="profile-dropdown__anchor min-w-max">
-            <slot />
-            <VaAvatar :size="32" color="warning"> 🙈 </VaAvatar>
-          </span>
-        </VaButton>
+        <div @click="toggleDropdown">
+          <VaButton preset="secondary" color="textPrimary">
+            <span class="profile-dropdown__anchor min-w-max">
+              <slot />
+              <VaAvatar :size="32" color="warning"> 🙈 </VaAvatar>
+            </span>
+          </VaButton>
+        </div>
       </template>
       <VaDropdownContent
         class="profile-dropdown__content md:w-60 px-0 py-4 w-full"
@@ -43,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useColors } from "vuestic-ui";
 import { useRouter } from "vue-router";
@@ -82,20 +87,15 @@ withDefaults(
         name: "account",
         separator: true,
         list: [
-          {
-            name: "profile",
-            to: "preferences",
-            icon: "mso-account_circle",
-          },
+          // {
+          //   name: "profile",
+          //   to: "preferences",
+          //   icon: "mso-account_circle",
+          // },
           {
             name: "settings",
             to: "settings",
             icon: "mso-settings",
-          },
-          {
-            name: "billing",
-            to: "billing",
-            icon: "mso-receipt_long",
           },
         ],
       },
@@ -111,10 +111,21 @@ withDefaults(
         ],
       },
     ],
-  },
+  }
 );
 
 const isShown = ref(false);
+
+// Debug logging
+watch(isShown, (newVal) => {
+  console.log("Dropdown state changed:", newVal);
+});
+
+const toggleDropdown = () => {
+  console.log("Toggle clicked, current state:", isShown.value);
+  isShown.value = !isShown.value;
+  console.log("New state:", isShown.value);
+};
 
 const resolveLinkAttribute = (item: ProfileListItem) => {
   return item.to
@@ -133,12 +144,31 @@ const handleClick = async (item: ProfileListItem) => {
     init({ message: t("user.loggedOut") || "Logged out", color: "info" });
     push({ name: "login" });
   }
+
+  // Close dropdown after click
+  isShown.value = false;
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.profile-dropdown-wrapper {
+  position: relative;
+  z-index: 1000;
+  display: inline-block;
+}
+
 .profile-dropdown {
   cursor: pointer;
+  position: relative;
+
+  :deep(.va-dropdown__anchor) {
+    display: inline-block;
+  }
+
+  :deep(.va-dropdown__content) {
+    z-index: 1001 !important;
+    position: relative;
+  }
 
   &__content {
     .menu-item:hover {
@@ -149,5 +179,24 @@ const handleClick = async (item: ProfileListItem) => {
   &__anchor {
     display: inline-block;
   }
+}
+
+/* Override untuk memastikan dropdown terlihat */
+:deep(.va-dropdown) {
+  position: relative;
+}
+
+:deep(.va-dropdown__content-wrapper) {
+  z-index: 1001;
+  position: absolute;
+}
+
+:deep(.va-dropdown__content) {
+  z-index: 1002 !important;
+  position: relative;
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
 }
 </style>

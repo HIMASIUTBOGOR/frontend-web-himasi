@@ -4,7 +4,12 @@ import UsersTable from "./widgets/UsersTable.vue";
 import EditUserForm from "./widgets/EditUserForm.vue";
 import { User } from "./types";
 import { useModal, useToast } from "vuestic-ui";
-import { getUsers } from "../../services/user.service";
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../../services/user.service";
 
 const doShowEditUserModal = ref(false);
 const { init: notify } = useToast();
@@ -23,9 +28,13 @@ const pagination = ref({ page: 1, perPage: 10, total: 0 });
 const fetchUsers = async () => {
   try {
     isLoading.value = true;
-    const response = await getUsers();
+    const response = await getUsers({
+      limit: pagination.value.perPage,
+      page: pagination.value.page,
+      search: filters.value.search,
+    });
     allUsers.value = response.users;
-    pagination.value = response.pagination;
+    pagination.value.total = response.meta.total;
   } catch (error: any) {
     notify({
       message: error.message || "Failed to fetch users",
@@ -36,25 +45,9 @@ const fetchUsers = async () => {
   }
 };
 
-// Computed filtered users
+// Return users directly from API (no client-side filtering)
 const users = computed(() => {
-  let filtered = [...allUsers.value];
-
-  // Apply search filter
-  if (filters.value.search) {
-    const search = filters.value.search.toLowerCase();
-    filtered = filtered.filter(
-      (user) =>
-        user.name?.toLowerCase().includes(search) ||
-        user.email?.toLowerCase().includes(search) ||
-        user.nim?.toLowerCase().includes(search)
-    );
-  }
-
-  // Update pagination total
-  pagination.value.total = filtered.length;
-
-  return filtered;
+  return allUsers.value;
 });
 
 // Load users on mount
@@ -62,11 +55,20 @@ onMounted(() => {
   fetchUsers();
 });
 
-// Watch search filter
+// Watch search filter and refetch
 watch(
   () => filters.value.search,
   () => {
     pagination.value.page = 1; // Reset to first page on search
+    fetchUsers();
+  }
+);
+
+// Watch pagination changes
+watch(
+  () => [pagination.value.page, pagination.value.perPage],
+  () => {
+    fetchUsers();
   }
 );
 
@@ -82,32 +84,51 @@ const showAddUserModal = () => {
   doShowEditUserModal.value = true;
 };
 
-const onUserSaved = async (user: User) => {
-  // TODO: Implement user create/update API
-  if (userToEdit.value) {
+const onUserSaved = async (data: { formData: FormData; isEdit: boolean }) => {
+  try {
+    const userName = data.formData.get("name") as string;
+
+    if (data.isEdit && userToEdit.value) {
+      // Update existing user
+      console.log(data.formData);
+      await updateUser(userToEdit.value.id, data.formData);
+      notify({
+        message: `${userName} has been updated`,
+        color: "success",
+      });
+    } else {
+      // Create new user
+      await createUser(data.formData);
+      notify({
+        message: `${userName} has been created`,
+        color: "success",
+      });
+    }
+
+    doShowEditUserModal.value = false;
+    await fetchUsers();
+  } catch (error: any) {
     notify({
-      message: `${user.name} has been updated`,
-      color: "success",
-    });
-  } else {
-    notify({
-      message: `${user.name} has been created`,
-      color: "success",
+      message: error.message || "Failed to save user",
+      color: "danger",
     });
   }
-
-  doShowEditUserModal.value = false;
-  await fetchUsers();
 };
 
 const onUserDelete = async (user: User) => {
-  // TODO: Implement delete API
-  notify({
-    message: `${user.name} has been deleted`,
-    color: "success",
-  });
-
-  await fetchUsers();
+  try {
+    await deleteUser(user.id);
+    notify({
+      message: `${user.name} has been deleted`,
+      color: "success",
+    });
+    await fetchUsers();
+  } catch (error: any) {
+    notify({
+      message: error.message || "Failed to delete user",
+      color: "danger",
+    });
+  }
 };
 
 const editFormRef = ref();
