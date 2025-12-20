@@ -139,7 +139,17 @@ const parentMenuOptions = computed(() => {
         placeholder="e.g., material-symbols:dashboard"
         class="w-full"
         name="icon"
-      />
+      >
+        <template #messages>
+          Icon dapat dilihat di
+          <a
+            href="https://icon-sets.iconify.design/"
+            target="_blank"
+            class="text-blue-500 hover:underline"
+            >https://icon-sets.iconify.design/</a
+          >
+        </template>
+      </VaInput>
 
       <VaInput
         :rules="[validators.required]"
