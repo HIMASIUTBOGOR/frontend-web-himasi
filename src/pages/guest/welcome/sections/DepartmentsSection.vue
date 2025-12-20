@@ -11,38 +11,46 @@
       </div>
 
       <div class="services-wrapper">
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-book-open"></i></div>
-          <h3>Akademik & Keilmuan</h3>
-          <p>
-            Fokus pada pengembangan akademik dan wawasan teknologi informasi
-            mahasiswa.
-          </p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-bullhorn"></i></div>
-          <h3>Media & Publikasi</h3>
-          <p>Mengelola informasi, media sosial, dan branding organisasi.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-users-cog"></i></div>
-          <h3>PSDM</h3>
-          <p>
-            Pengembangan Sumber Daya Mahasiswa, kaderisasi, dan pelatihan soft
-            skill.
-          </p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-calendar-alt"></i></div>
-          <h3>Acara & Humas</h3>
-          <p>Menyelenggarakan event dan menjalin hubungan dengan pihak luar.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-running"></i></div>
-          <h3>Olahraga</h3>
-          <p>Menampung minat dan bakat mahasiswa di bidang olahraga.</p>
+        <div
+          v-for="department in dataDepartments"
+          :key="department.id"
+          class="service-card"
+        >
+          <div class="service-icon">
+            <Icon
+              v-if="department.icon"
+              :icon="department.icon"
+              :width="40"
+              :height="40"
+              class="mx-auto"
+            />
+          </div>
+          <h3>{{ department.title }}</h3>
+          <p>{{ department.desc }}</p>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { getContentDepartments } from "../../../../services/content.service";
+import { Icon } from "@iconify/vue";
+
+const dataDepartments = ref([]);
+
+const fetchDepartments = async () => {
+  try {
+    const response = await getContentDepartments();
+    console.log(response);
+    dataDepartments.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch departments:", error);
+  }
+};
+
+onMounted(() => {
+  fetchDepartments();
+});
+</script>

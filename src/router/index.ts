@@ -81,6 +81,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "cms/benefits",
         component: () => import("../pages/cms/benefit/BenefitPage.vue"),
       },
+      {
+        name: "Departemen",
+        path: "cms/departments",
+        component: () => import("../pages/cms/departemen/DepartemenPage.vue"),
+      },
 
       // Settings & Preferences
       {

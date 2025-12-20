@@ -11,48 +11,6 @@
         </p>
       </div>
 
-      <!-- <div class="benefits-grid">
-        <div class="benefit-card">
-          <div class="benefit-img benefit-blue">
-            <div class="circle c1"></div>
-            <div class="circle c2"></div>
-          </div>
-          <div class="benefit-content">
-            <h3>Networking Luas</h3>
-            <p>
-              Bangun relasi dengan sesama mahasiswa, alumni, dan praktisi di
-              bidang teknologi informasi.
-            </p>
-          </div>
-        </div>
-        <div class="benefit-card">
-          <div class="benefit-img benefit-pink">
-            <div class="circle c1"></div>
-            <div class="circle c2"></div>
-          </div>
-          <div class="benefit-content">
-            <h3>Pengembangan Soft Skill</h3>
-            <p>
-              Latih kepemimpinan, manajemen waktu, dan teamwork melalui berbagai
-              kepanitiaan.
-            </p>
-          </div>
-        </div>
-        <div class="benefit-card">
-          <div class="benefit-img benefit-green">
-            <div class="circle c1"></div>
-            <div class="circle c2"></div>
-          </div>
-          <div class="benefit-content">
-            <h3>Peningkatan Kompetensi</h3>
-            <p>
-              Ikuti pelatihan dan workshop eksklusif untuk meningkatkan skill
-              teknis dan non-teknis.
-            </p>
-          </div>
-        </div>
-      </div> -->
-
       <div class="benefits-grid">
         <div
           v-for="benefit in dataBenefits"

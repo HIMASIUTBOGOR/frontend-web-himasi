@@ -18,3 +18,13 @@ export const getContentBenefits = async () => {
     throw new Error(msg);
   }
 };
+
+export const getContentDepartments = async () => {
+  try {
+    const response = await http.get("/api/content/departments");
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to fetch departments";
+    throw new Error(msg);
+  }
+};
