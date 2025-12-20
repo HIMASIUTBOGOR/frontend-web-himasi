@@ -1,5 +1,5 @@
 import http from "./http";
-import { payloadPermission, payloadUser } from "../interfaces/IUser";
+import { payloadPermission, payloadRole } from "../interfaces/IUser";
 
 export const getUsers = async (params?: {
   limit?: number;
@@ -98,10 +98,40 @@ export const getRoles = async (params?: {
   }
 };
 
+export const createRole = async (data: payloadRole) => {
+  try {
+    const response = await http.post("/api/role", data);
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to create role";
+    throw new Error(msg);
+  }
+};
+
+export const updateRole = async (id: number, data: payloadRole) => {
+  try {
+    const response = await http.put(`/api/role/${id}`, data);
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to update role";
+    throw new Error(msg);
+  }
+};
+
+export const deleteRole = async (id: number) => {
+  try {
+    await http.delete(`/api/role/${id}`);
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to delete the role";
+    throw new Error(msg);
+  }
+};
+
 export const getPermission = async (params?: {
   limit?: number;
   page?: number;
   search?: string;
+  type?: string;
 }) => {
   try {
     const response = await http.get("/api/permissions", {
@@ -109,6 +139,7 @@ export const getPermission = async (params?: {
         limit: params?.limit || 10,
         page: params?.page || 1,
         search: params?.search || "",
+        type: params?.type || "",
       },
     });
     const apiData = response.data;
@@ -153,6 +184,35 @@ export const deletePermission = async (id: number) => {
   } catch (error: any) {
     const msg =
       error?.response?.data?.message || "Failed to delete the permission";
+    throw new Error(msg);
+  }
+};
+
+export const getMenu = async (params?: {
+  limit?: number;
+  page?: number;
+  search?: string;
+}) => {
+  try {
+    const response = await http.get("/api/menus", {
+      params: {
+        limit: params?.limit || 10,
+        page: params?.page || 1,
+        search: params?.search || "",
+      },
+    });
+    const apiData = response.data;
+    return {
+      menu: apiData.data,
+      meta: {
+        page: apiData.meta.current_page,
+        perPage: apiData.meta.per_page,
+        total: apiData.meta.total,
+        lastPage: apiData.meta.last_page,
+      },
+    };
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to fetch permissions";
     throw new Error(msg);
   }
 };

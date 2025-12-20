@@ -24,3 +24,9 @@ export type payloadPermission = {
   name: string;
   guard_name: string;
 };
+
+export type payloadRole = {
+  name: string;
+  guard_name: string;
+  permissions: number[];
+};

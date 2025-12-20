@@ -220,7 +220,3 @@ const {
     />
   </VaModal>
 </template>
-
-<!-- <script setup>
-
-</script> -->
