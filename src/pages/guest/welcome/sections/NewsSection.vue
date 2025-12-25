@@ -11,10 +11,10 @@
             inovasi seputar Sistem Informasi.
           </p>
           <div class="blog-nav">
-            <button class="nav-btn prev">
+            <button class="nav-btn prev" aria-label="Berita sebelumnya">
               <i class="fas fa-arrow-left"></i>
             </button>
-            <button class="nav-btn next">
+            <button class="nav-btn next" aria-label="Berita selanjutnya">
               <i class="fas fa-arrow-right"></i>
             </button>
           </div>
@@ -22,78 +22,120 @@
       </div>
 
       <div class="infopedia-grid">
-        <div class="info-card">
-          <div class="info-img">
-            <span class="category-badge badge-blue">Akademik</span>
-            <img
-              src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-              alt="Seminar"
-            />
-          </div>
+        <div v-if="isLoading" class="info-card">
           <div class="info-content">
-            <div class="info-meta">
-              <span><i class="far fa-calendar"></i> 12 Des 2024</span>
-              <span><i class="far fa-user"></i> Admin</span>
-            </div>
-            <h3>Tips Sukses Menghadapi Tugas Akhir Mahasiswa SI</h3>
-            <p>
-              Simak strategi jitu dan tips manajemen waktu untuk menyelesaikan
-              skripsi tepat waktu dengan hasil memuaskan.
-            </p>
-            <a href="#" class="info-link"
-              >Baca Artikel <i class="fas fa-long-arrow-alt-right"></i
-            ></a>
+            <p>Sedang memuat berita...</p>
           </div>
         </div>
 
-        <div class="info-card">
-          <div class="info-img">
-            <span class="category-badge badge-orange">Event</span>
-            <img
-              src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-              alt="Webinar"
-            />
-          </div>
+        <div v-else-if="errorMessage" class="info-card">
           <div class="info-content">
-            <div class="info-meta">
-              <span><i class="far fa-calendar"></i> 10 Des 2024</span>
-              <span><i class="far fa-user"></i> Divisi Acara</span>
-            </div>
-            <h3>Recap: Kemeriahan Webinar Tech Talk 2024</h3>
-            <p>
-              Lihat keseruan webinar minggu lalu tentang "AI in Modern Business"
-              yang dihadiri lebih dari 300 peserta.
-            </p>
-            <a href="#" class="info-link"
-              >Lihat Galeri <i class="fas fa-long-arrow-alt-right"></i
-            ></a>
+            <h3>Gagal memuat berita</h3>
+            <p>{{ errorMessage }}</p>
           </div>
         </div>
 
-        <div class="info-card">
+        <div v-else-if="!newsItems.length" class="info-card">
+          <div class="info-content">
+            <h3>Belum ada berita</h3>
+            <p>Kembali lagi nanti untuk update terbaru.</p>
+            <RouterLink :to="newsPageLink" class="info-link">
+              Lihat halaman berita <i class="fas fa-long-arrow-alt-right"></i>
+            </RouterLink>
+          </div>
+        </div>
+
+        <div v-else v-for="item in newsItems" :key="item.id" class="info-card">
           <div class="info-img">
-            <span class="category-badge badge-green">Inovasi</span>
-            <img
-              src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-              alt="Project"
-            />
+            <span class="category-badge" :class="badgeClass(item.category)">
+              {{ item.category || "Berita" }}
+            </span>
+            <img :src="item.photo || defaultImage" :alt="item.title" />
           </div>
           <div class="info-content">
             <div class="info-meta">
-              <span><i class="far fa-calendar"></i> 05 Des 2024</span>
-              <span><i class="far fa-user"></i> Tim Riset</span>
+              <span>
+                <i class="far fa-calendar"></i>
+                {{ formatDate(item.published_at) }}
+              </span>
+              <span>
+                <i class="far fa-user"></i>
+                {{ item.author || "Admin" }}
+              </span>
             </div>
-            <h3>Mahasiswa HIMASI Ciptakan Aplikasi E-Learning</h3>
-            <p>
-              Tim pengembang dari HIMASI berhasil meluncurkan prototype aplikasi
-              belajar mandiri untuk mahasiswa baru.
-            </p>
-            <a href="#" class="info-link"
-              >Selengkapnya <i class="fas fa-long-arrow-alt-right"></i
-            ></a>
+            <h3>{{ item.title }}</h3>
+            <p>{{ stripHtml(item.desc) }}</p>
+            <RouterLink :to="newsPageLink" class="info-link">
+              Baca artikel
+              <i class="fas fa-long-arrow-alt-right"></i>
+            </RouterLink>
           </div>
         </div>
+      </div>
+
+      <div class="infopedia-footer" v-if="newsItems.length">
+        <RouterLink :to="newsPageLink" class="info-link see-all">
+          Lihat semua berita
+          <i class="fas fa-long-arrow-alt-right"></i>
+        </RouterLink>
       </div>
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import { getNews } from "../../../../services/cms/news.service";
+import type { News } from "../../../cms/news/type";
+
+const newsItems = ref<News[]>([]);
+const isLoading = ref(false);
+const errorMessage = ref("");
+const defaultImage =
+  "https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80";
+const newsPageLink = { name: "News" };
+
+const formatDate = (value: string) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const badgeClass = (category?: string) => {
+  const key = (category || "").toLowerCase();
+  if (key.includes("event")) return "badge-orange";
+  if (key.includes("inovasi") || key.includes("innovation"))
+    return "badge-green";
+  return "badge-blue";
+};
+
+const stripHtml = (value?: string) => {
+  if (!value) return "";
+  const div = document.createElement("div");
+  div.innerHTML = value;
+  return div.textContent || div.innerText || "";
+};
+
+const fetchNews = async () => {
+  try {
+    isLoading.value = true;
+    errorMessage.value = "";
+    const response = await getNews({ limit: 3 });
+    newsItems.value = response.news || [];
+  } catch (error: any) {
+    errorMessage.value =
+      error?.message || "Terjadi kesalahan saat memuat berita.";
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchNews();
+});
+</script>

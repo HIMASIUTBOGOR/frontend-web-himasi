@@ -69,6 +69,26 @@ const routes: Array<RouteRecordRaw> = [
         path: "user/menu",
         component: () => import("../pages/menu/MenuPage.vue"),
       },
+
+      // Master Data Management
+      {
+        name: "Enumeration",
+        path: "master/enumeration",
+        component: () =>
+          import("../pages/master/enumeration/EnumerationPage.vue"),
+      },
+
+      {
+        name: "Departemen",
+        path: "master/department",
+        component: () =>
+          import("../pages/master/departemen/DepartemenPage.vue"),
+      },
+      {
+        name: "Proker",
+        path: "master/proker",
+        component: () => import("../pages/master/proker/ProkerPage.vue"),
+      },
       // CMS Management
       // Here
       {
@@ -81,15 +101,16 @@ const routes: Array<RouteRecordRaw> = [
         path: "cms/benefits",
         component: () => import("../pages/cms/benefit/BenefitPage.vue"),
       },
+
       {
-        name: "Departemen",
-        path: "cms/departments",
-        component: () => import("../pages/cms/departemen/DepartemenPage.vue"),
+        name: "News",
+        path: "cms/news",
+        component: () => import("../pages/cms/news/NewsPage.vue"),
       },
       {
-        name: "Proker",
-        path: "cms/proker",
-        component: () => import("../pages/cms/proker/ProkerPage.vue"),
+        name: "NewsForm",
+        path: "cms/news/form",
+        component: () => import("../pages/cms/news/NewsFormPage.vue"),
       },
 
       // Settings & Preferences

@@ -10,3 +10,13 @@ export type payloadBenefit = {
   title: string;
   desc: string;
 };
+
+export type payloadNews = {
+  photo: File | null;
+  title: string;
+  category_id: string;
+  desc: string;
+  is_active: boolean;
+  author: string;
+  published_at: Date | string;
+};

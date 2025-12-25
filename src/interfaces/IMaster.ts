@@ -11,3 +11,8 @@ export type payloadProker = {
   action_link?: string;
   is_active: boolean;
 };
+
+export type payloadEnumeration = {
+  key: string;
+  value: string;
+};
