@@ -38,3 +38,12 @@ export const getContentProkers = async () => {
     throw new Error(msg);
   }
 };
+export const getContentFaq = async () => {
+  try {
+    const response = await http.get("/api/content/faqs");
+    return response.data;
+  } catch (error: any) {
+    const msg = error?.response?.data?.message || "Failed to fetch faq";
+    throw new Error(msg);
+  }
+};

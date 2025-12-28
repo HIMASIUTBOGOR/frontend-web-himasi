@@ -127,7 +127,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: "faq",
         path: "cms/faq",
-        component: () => import("../pages/faq/FaqPage.vue"),
+        component: () => import("../pages/cms/faq/FaqPage.vue"),
       },
     ],
   },

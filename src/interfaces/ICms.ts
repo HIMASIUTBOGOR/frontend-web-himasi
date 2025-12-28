@@ -20,3 +20,8 @@ export type payloadNews = {
   author: string;
   published_at: Date | string;
 };
+
+export type payloadFaq = {
+  title: string;
+  desc: string;
+};

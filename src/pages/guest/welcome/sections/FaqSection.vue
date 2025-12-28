@@ -11,18 +11,18 @@
       <div class="faq-grid">
         <div
           v-for="(q, idx) in faqs"
-          :key="idx"
+          :key="q.id"
           class="faq-item"
           :class="{ active: q.open }"
         >
           <div class="faq-header" @click="toggleFaq(idx)">
-            <h3>{{ q.question }}</h3>
+            <h3>{{ q.title }}</h3>
             <span class="faq-icon"
               ><i :class="q.open ? 'fas fa-minus' : 'fas fa-plus'"></i
             ></span>
           </div>
           <div class="faq-body" :style="{ display: q.open ? 'block' : 'none' }">
-            <p>{{ q.answer }}</p>
+            <p>{{ q.desc }}</p>
           </div>
         </div>
       </div>
@@ -31,35 +31,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { getContentFaq } from "../../../../services/content.service";
 
-type FaqItem = { question: string; answer: string; open: boolean };
-const faqs = ref<FaqItem[]>([
-  {
-    question: "Bagaimana cara bergabung menjadi pengurus HIMASI?",
-    answer:
-      "Pendaftaran pengurus dibuka setiap awal periode kepengurusan (biasanya setahun sekali). Pantau terus media sosial kami untuk info open recruitment.",
-    open: true,
-  },
-  {
-    question: "Apa saja syarat menjadi anggota HIMASI?",
-    answer:
-      "Syarat utamanya adalah mahasiswa aktif Program Studi Sistem Informasi Universitas Terbuka Bogor.",
-    open: false,
-  },
-  {
-    question: "Apakah kegiatan HIMASI hanya untuk pengurus?",
-    answer:
-      "Tidak, sebagian besar kegiatan seperti webinar, workshop, dan seminar terbuka untuk umum dan seluruh mahasiswa UT Bogor.",
-    open: false,
-  },
-  {
-    question: "Dimana sekretariat HIMASI UT Bogor?",
-    answer:
-      "Sekretariat kami (jika ada fisik) atau basecamp online bisa dihubungi melalui contact person yang tersedia.",
-    open: false,
-  },
-]);
+type FaqItem = { id: string; title: string; desc: string; open: boolean };
+const faqs = ref<FaqItem[]>([]);
+
+const fetchFaqs = async () => {
+  try {
+    const response = await getContentFaq();
+    console.log(response);
+    faqs.value = response.data.map((faq: any, index: number) => ({
+      ...faq,
+      open: index === 0,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch faqs:", error);
+  }
+};
+
+onMounted(() => {
+  fetchFaqs();
+});
 
 function toggleFaq(index: number) {
   faqs.value = faqs.value.map((item, i) => ({
