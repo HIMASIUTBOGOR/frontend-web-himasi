@@ -30,6 +30,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "/pendaftaran",
         component: () => import("../pages/guest/registration/Registration.vue"),
       },
+
+      {
+        name: "Aspiration",
+        path: "/aspirasi",
+        component: () => import("../pages/guest/Aspiration/Aspiration.vue"),
+      },
     ],
   },
   {

@@ -3,7 +3,7 @@
     <div class="container hero-container-centered">
       <div class="hero-content-centered">
         <h1>
-          Mewujudkan Generasi
+          Mewujudkan Generasiiiiiii
           <span class="highlight-text">Sistem Informasi</span> yang Unggul &
           Berkarakter
         </h1>
@@ -13,8 +13,9 @@
         </p>
         <div class="hero-buttons">
           <a href="#proker" class="btn btn-primary">Lihat Program Kerja</a>
-          <a href="#about" class="btn btn-secondary">Tentang Kami</a>
+          <a href="/aspirasi" class="btn btn-secondary">Wadah Aspirasi</a>
         </div>
+        
       </div>
 
       <div class="hero-gallery-wrapper">

@@ -4405,7 +4405,7 @@ duplexify@^3.5.0, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-"e2e@file:/Users/nazalprastya/Perkuliahan/Himasi/Website /frontend-web-himasi/e2e":
+"e2e@file:/Users/indriyanipuspita/frontend-web-himasi/e2e":
   version "0.0.0"
   resolved "file:e2e"
 
