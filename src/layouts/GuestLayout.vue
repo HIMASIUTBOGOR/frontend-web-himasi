@@ -61,10 +61,13 @@
     <router-view />
   </main>
 
+
+  <FloatingBtn />
   <FooterSection />
 </template>
 
 <script setup lang="ts">
+import FloatingBtn from "../components/floating-btn/FloatingBtn.vue";
 import FooterSection from "../pages/guest/welcome/sections/FooterSection.vue";
 import { onMounted, onUnmounted } from "vue";
 
