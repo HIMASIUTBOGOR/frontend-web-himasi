@@ -3,7 +3,7 @@
     <div class="container hero-container-centered">
       <div class="hero-content-centered">
         <h1>
-          Mewujudkan Generasiiiiiii
+          Mewujudkan Generasi
           <span class="highlight-text">Sistem Informasi</span> yang Unggul &
           Berkarakter
         </h1>

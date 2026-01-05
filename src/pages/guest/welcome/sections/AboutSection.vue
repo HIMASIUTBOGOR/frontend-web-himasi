@@ -3,7 +3,7 @@
     <div class="container intro-container">
       <div class="intro-visual">
         <img
-          src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+          src="../../../../../public/images/image-about.png"
           alt="Kegiatan HIMASI"
           class="intro-img"
         />
@@ -19,10 +19,6 @@
             Bogor merupakan organisasi kemahasiswaan yang mewadahi seluruh
             mahasiswa Program Studi Sistem Informasi untuk mengembangkan potensi
             akademik dan non-akademik.
-          </p>
-          <p class="intro-desc-detail">
-            Kami berkomitmen untuk menciptakan lingkungan yang kolaboratif,
-            inovatif, dan prestatif bagi seluruh anggota.
           </p>
         </div>
 

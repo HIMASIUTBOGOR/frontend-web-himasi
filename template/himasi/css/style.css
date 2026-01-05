@@ -256,6 +256,18 @@ img {
   box-shadow: 0 8px 20px rgba(244, 120, 25, 0.4);
 }
 
+.btn-secondary {
+    color: var(--text-dark);
+    border: 1px solid var(--primary-color);
+    background: transparent;
+}
+
+.btn-secondary:hover {
+    color: var(--color-coral);
+    border: 1px solid var(--color-coral);
+    background: transparent;
+}
+
 /* ================= HEADER SECTION ================= */
 .header {
   height: var(--header-height);
@@ -793,7 +805,7 @@ img {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.c1 {
+/* .c1 {
   width: 100px;
   height: 100px;
   top: -20px;
@@ -805,10 +817,10 @@ img {
   height: 60px;
   bottom: 20px;
   left: 20px;
-}
+} */
 
 .benefit-content {
-  padding: 0 25px 25px;
+  padding: 0 0px 25px;
 }
 
 .benefit-content h3 {

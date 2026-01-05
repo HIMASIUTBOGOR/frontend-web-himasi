@@ -17,9 +17,9 @@ import AboutSection from "./sections/AboutSection.vue";
 import VisionSection from "./sections/VisionSection.vue";
 import DepartmentsSection from "./sections/DepartmentsSection.vue";
 import BenefitsSection from "./sections/BenefitsSection.vue";
-import ProkerSection from "./sections/ProkerSection.vue";
 import NewsSection from "./sections/NewsSection.vue";
 import FaqSection from "./sections/FaqSection.vue";
+import ProkerSection from "./sections/ProkerSection.vue";
 </script>
 
 <!-- Styles are provided via global import of template style.css in main.ts -->
