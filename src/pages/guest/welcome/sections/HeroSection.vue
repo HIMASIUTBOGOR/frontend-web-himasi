@@ -13,7 +13,7 @@
         </p>
         <div class="hero-buttons">
           <a href="#proker" class="btn btn-primary">Lihat Program Kerja</a>
-          <a href="/aspirasi" class="btn btn-secondary">Wadah Aspirasi</a>
+          <a href="/aspirasi" class="btn btn-secondary">Posko Aspirasi</a>
         </div>
         
       </div>

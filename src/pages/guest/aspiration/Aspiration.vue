@@ -2,7 +2,7 @@
 <section class="page-header-simple">
             <div class="container">
                 <div class="header-content">
-                    <h1>Wadah <span class="highlight-text">Aspirasi</span></h1>
+                    <h1>Posko <span class="highlight-text">Aspirasi</span></h1>
                     <p>Suara Anda sangat berarti bagi kami. Sampaikan kritik, saran, atau ide inovatif untuk kemajuan
                         HIMASI.</p>
                 </div>

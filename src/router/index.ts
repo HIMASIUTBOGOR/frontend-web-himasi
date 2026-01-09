@@ -34,7 +34,12 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: "Aspiration",
         path: "/aspirasi",
-        component: () => import("../pages/guest/Aspiration/Aspiration.vue"),
+        component: () => import("../pages/guest/aspiration/Aspiration.vue"),
+      },
+      {
+        name: "Practice",
+        path: "/practice",
+        component: () => import("../pages/guest/practice/Practice.vue"),
       },
     ],
   },
@@ -118,6 +123,9 @@ const routes: Array<RouteRecordRaw> = [
         path: "cms/news/form",
         component: () => import("../pages/cms/news/NewsFormPage.vue"),
       },
+      
+
+
 
       // Settings & Preferences
       {

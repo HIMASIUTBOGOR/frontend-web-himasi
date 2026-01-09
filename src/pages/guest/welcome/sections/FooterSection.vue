@@ -3,7 +3,7 @@
     <div class="container footer-container">
       <div class="footer-col footer-brand">
         <a href="#" class="logo footer-logo">
-          HIMASI <span class="logo-highlight">UT Bogor</span>
+          <img src="../../../../../public/images/logo-himasi-white.png"
         </a>
         <p>
           Mewujudkan mahasiswa Sistem Informasi yang unggul, kreatif, dan
