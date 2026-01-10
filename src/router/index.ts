@@ -100,8 +100,8 @@ const routes: Array<RouteRecordRaw> = [
         path: "master/proker",
         component: () => import("../pages/master/proker/ProkerPage.vue"),
       },
+
       // CMS Management
-      // Here
       {
         name: "Kegitatan",
         path: "cms/activities",
@@ -123,9 +123,13 @@ const routes: Array<RouteRecordRaw> = [
         path: "cms/news/form",
         component: () => import("../pages/cms/news/NewsFormPage.vue"),
       },
-      
 
-
+      // Registration
+      {
+        name: "Registration",
+        path: "registration",
+        component: () => import("../pages/registration/RegistrationPage.vue"),
+      },
 
       // Settings & Preferences
       {
